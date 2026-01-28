@@ -51,7 +51,7 @@ export default function RequestDocumentPage() {
             </span>
             <h1 className="text-3xl md:text-5xl font-black text-primary-900 leading-tight">
               AI導入の第一歩を支える<br />
-              综合サービス紹介資料
+              総合サービス紹介資料
             </h1>
           </div>
         </div>
@@ -126,8 +126,8 @@ export default function RequestDocumentPage() {
 
           {/* Right Column: Sticky Form */}
           <div className="lg:w-[400px] flex-shrink-0">
-            <div className="lg:sticky lg:top-24 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
-              <div className="bg-primary-900 p-6 text-white text-center">
+            <div className="lg:sticky lg:top-24 bg-white rounded-2xl shadow-2xl border border-gray-100">
+              <div className="bg-primary-900 p-6 text-white text-center rounded-t-2xl">
                 <h3 className="text-lg font-bold">資料請求フォーム</h3>
                 <p className="text-xs text-primary-300 mt-1">最短1分で入力完了します</p>
               </div>
