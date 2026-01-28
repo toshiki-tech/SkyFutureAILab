@@ -4,6 +4,13 @@ import Hero from '@/components/Hero'
 import FeaturedCases from '@/components/FeaturedCases'
 import FeaturedMethods from '@/components/FeaturedMethods'
 import ServiceGrid from '@/components/ServiceGrid'
+import { client } from '@/sanity/lib/client'
+import {
+  ctaConfigQuery,
+  featuredCasesQuery,
+  featuredMethodsQuery,
+  servicesQuery,
+} from '@/lib/sanity/queries'
 import {
   mockCtaConfig,
   mockServices,
@@ -19,12 +26,20 @@ export const metadata: Metadata = {
     'Sky Future のMicrosoft 365・Power Platform・Dynamics 365・生成AI を活用したDX支援に関する事例とメソッドを紹介します。',
 }
 
-export default function HomePage() {
-  // 暂时使用静态数据，后续会替换为 Sanity 数据
-  const ctaConfig = mockCtaConfig
-  const featuredCases = mockFeaturedCases
-  const featuredMethods = mockFeaturedMethods
-  const services = mockServices
+export default async function HomePage() {
+  // Sanityからデータを取得（失敗した場合はnull/空配列を返す）
+  const [sanityCtaConfig, sanityFeaturedCases, sanityFeaturedMethods, sanityServices] = await Promise.all([
+    client.fetch(ctaConfigQuery).catch(() => null),
+    client.fetch(featuredCasesQuery).catch(() => []),
+    client.fetch(featuredMethodsQuery).catch(() => []),
+    client.fetch(servicesQuery).catch(() => []),
+  ])
+
+  // Sanityデータがある場合はそちらを利用し、ない場合はモックデータを使用する
+  const ctaConfig = sanityCtaConfig || mockCtaConfig
+  const featuredCases = (sanityFeaturedCases && sanityFeaturedCases.length > 0) ? sanityFeaturedCases : mockFeaturedCases
+  const featuredMethods = (sanityFeaturedMethods && sanityFeaturedMethods.length > 0) ? sanityFeaturedMethods : mockFeaturedMethods
+  const services = (sanityServices && sanityServices.length > 0) ? sanityServices : mockServices
 
   return (
     <div className="overflow-x-hidden">
@@ -229,7 +244,7 @@ export default function HomePage() {
           </p>
           <div className="flex flex-wrap justify-center gap-6">
             <Link
-              href="/contactus"
+              href="/contact"
               className="inline-flex items-center gap-2 px-10 py-5 bg-white rounded-lg font-semibold text-lg shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300"
               style={{ color: '#2563eb' }}
             >

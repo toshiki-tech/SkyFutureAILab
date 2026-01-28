@@ -9,9 +9,10 @@ export default function Footer() {
               Microsoft 365・Power Platform・Dynamics 365・生成AI を活用したDX支援
             </p>
           </div>
-          <div className="flex gap-8 text-sm text-gray-600">
-            <a href="/contactus" className="hover:text-primary-600 transition-colors">お問い合わせ</a>
-            <a href="/privacy" className="hover:text-primary-600 transition-colors">プライバシーポリシー</a>
+          <div className="flex flex-wrap gap-x-8 gap-y-4 text-sm text-gray-600">
+            <a href="/about" className="hover:text-primary-600 transition-colors whitespace-nowrap">会社紹介</a>
+            <a href="/contact" className="hover:text-primary-600 transition-colors whitespace-nowrap">お問い合わせ</a>
+            <a href="/privacy" className="hover:text-primary-600 transition-colors whitespace-nowrap">プライバシーポリシー</a>
           </div>
         </div>
       </div>

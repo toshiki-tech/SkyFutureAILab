@@ -3,7 +3,7 @@ import Image from 'next/image'
 import { urlFor } from '@/lib/sanity/image'
 
 interface PortableTextRendererProps {
-  value: unknown[]
+  value: any
 }
 
 export default function PortableTextRenderer({

@@ -35,12 +35,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #3b82f6;
+  background: #b68d40;
   border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #2563eb;
+  background: #9c7836;
 }
 
 /* 跑马灯动画 */

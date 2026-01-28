@@ -24,12 +24,11 @@ export default function CaseList({ cases }: CaseListProps) {
           className="group block rounded-2xl border border-gray-200/80 bg-white shadow-sm transition-all duration-300 hover:shadow-xl hover:shadow-primary-500/5 hover:border-primary-300 overflow-hidden"
         >
           <div className="flex flex-col md:flex-row">
-            {/* 左侧图片区域 */}
             <div className="relative w-full md:w-2/5 h-64 md:h-auto bg-gradient-to-br from-primary-50 to-accent-50 flex items-center justify-center overflow-hidden">
-              {item.mainImage ? (
+              {item.featuredImage?.asset?.url ? (
                 <Image
-                  src={item.mainImage}
-                  alt={item.title}
+                  src={item.featuredImage.asset.url}
+                  alt={item.featuredImage.alt || item.title}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />

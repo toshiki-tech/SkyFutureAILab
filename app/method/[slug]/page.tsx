@@ -1,6 +1,13 @@
 import type { Metadata } from 'next'
+import { client } from '@/sanity/lib/client'
+import {
+  methodBySlugQuery,
+  relatedCasesQuery,
+  ctaConfigQuery,
+} from '@/lib/sanity/queries'
 import { notFound } from 'next/navigation'
 import { mockMethodDetails, mockCtaConfig, mockFeaturedCases } from '@/lib/mockData'
+import type { Method } from '@/types'
 import Breadcrumb from '@/components/Breadcrumb'
 import StickyCTA from '@/components/StickyCTA'
 import RelatedCases from '@/components/RelatedCases'
@@ -13,8 +20,9 @@ interface MethodPageProps {
 export async function generateMetadata({
   params,
 }: MethodPageProps): Promise<Metadata> {
-  // 暂时使用静态数据，后续会替换为 Sanity 数据
-  const methodData = mockMethodDetails[params.slug]
+  // Sanityからデータを取得
+  const methodData = await client.fetch(methodBySlugQuery, { slug: params.slug }).catch(() => null)
+    || mockMethodDetails[params.slug]
 
   if (!methodData) {
     return {
@@ -28,19 +36,38 @@ export async function generateMetadata({
   }
 }
 
-export default function MethodPage({ params }: MethodPageProps) {
-  // 暂时使用静态数据，后续会替换为 Sanity 数据
-  const methodData = mockMethodDetails[params.slug]
-  const ctaConfig = mockCtaConfig
+export default async function MethodPage({ params }: MethodPageProps) {
+  const { slug } = params
+
+  // Sanityからデータを取得
+  const [sanityMethod, sanityCtaConfig] = await Promise.all([
+    client.fetch(methodBySlugQuery, { slug }).catch(() => null),
+    client.fetch(ctaConfigQuery).catch(() => null),
+  ])
+
+  // Sanityデータがある場合はそちらを利用し、ない場合はモックデータを使用する
+  const methodData = (sanityMethod || mockMethodDetails[slug]) as unknown as Method
+  const ctaConfig = sanityCtaConfig || mockCtaConfig
 
   if (!methodData) {
     notFound()
   }
 
-  // 简单的相关事例推荐（基于 techTags 交集）
-  const relatedCases = mockFeaturedCases.filter((caseItem) =>
-    caseItem.techTags?.some((tag) => methodData.techTags?.includes(tag))
-  ).slice(0, 3)
+  // 関連事例の取得
+  let relatedCases = []
+  if (sanityMethod && sanityMethod.techTags?.length > 0) {
+    relatedCases = await client.fetch(relatedCasesQuery, {
+      excludeId: sanityMethod._id,
+      techTags: sanityMethod.techTags,
+    }).catch(() => [])
+  }
+
+  // Sanityから取得できなかった場合、または推薦結果が空の場合はモックデータから推荐
+  if (relatedCases.length === 0) {
+    relatedCases = mockFeaturedCases.filter((caseItem) =>
+      caseItem.techTags?.some((tag) => (methodData.techTags as any[])?.includes(tag))
+    ).slice(0, 3)
+  }
 
   return (
     <div className="container mx-auto px-6 py-20 max-w-7xl">
@@ -55,7 +82,7 @@ export default function MethodPage({ params }: MethodPageProps) {
         <article className="lg:col-span-3">
           <header className="mb-12">
             <div className="mb-6 flex flex-wrap gap-3">
-              {methodData.techTags?.map((tag) => (
+              {methodData.techTags && methodData.techTags.length > 0 && methodData.techTags.map((tag) => (
                 <span
                   key={tag}
                   className="px-4 py-2 text-sm font-medium text-accent-700 bg-accent-50 rounded-full"

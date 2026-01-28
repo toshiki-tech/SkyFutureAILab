@@ -74,6 +74,21 @@ export interface Service {
   seo?: SeoFields
 }
 
+export interface Column {
+  _id: string
+  title: string
+  slug: { current: string }
+  author?: string
+  category?: string
+  excerpt?: string
+  content?: unknown[]
+  featuredImage?: SanityImage
+  techTags?: TechTag[]
+  publishedAt: string
+  updatedAt?: string
+  seo?: SeoFields
+}
+
 export interface CtaConfig {
   primaryCTA: {
     text: string

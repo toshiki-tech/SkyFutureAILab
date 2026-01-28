@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
+import { client } from '@/sanity/lib/client'
+import { serviceBySlugQuery, ctaConfigQuery } from '@/lib/sanity/queries'
 import { notFound } from 'next/navigation'
 import { mockServiceDetails, mockCtaConfig } from '@/lib/mockData'
+import type { Service } from '@/types'
 import Breadcrumb from '@/components/Breadcrumb'
 import StickyCTA from '@/components/StickyCTA'
 import PortableTextRenderer from '@/components/PortableTextRenderer'
@@ -12,8 +15,9 @@ interface ServicePageProps {
 export async function generateMetadata({
   params,
 }: ServicePageProps): Promise<Metadata> {
-  // 暂时使用静态数据，后续会替换为 Sanity 数据
-  const service = mockServiceDetails[params.slug]
+  // Sanityからデータを取得
+  const service = await client.fetch(serviceBySlugQuery, { slug: params.slug }).catch(() => null)
+    || mockServiceDetails[params.slug]
 
   if (!service) {
     return { title: 'サービスが見つかりません | SkyFuture AI Lab' }
@@ -25,10 +29,18 @@ export async function generateMetadata({
   }
 }
 
-export default function ServicePage({ params }: ServicePageProps) {
-  // 暂时使用静态数据，后续会替换为 Sanity 数据
-  const service = mockServiceDetails[params.slug]
-  const ctaConfig = mockCtaConfig
+export default async function ServicePage({ params }: ServicePageProps) {
+  const { slug } = params
+
+  // Sanityからデータを取得
+  const [sanityService, sanityCtaConfig] = await Promise.all([
+    client.fetch(serviceBySlugQuery, { slug }).catch(() => null),
+    client.fetch(ctaConfigQuery).catch(() => null),
+  ])
+
+  // Sanityデータがある場合はそちらを利用し、ない場合はモックデータを使用する
+  const service = (sanityService || mockServiceDetails[slug]) as unknown as Service
+  const ctaConfig = sanityCtaConfig || mockCtaConfig
 
   if (!service) {
     notFound()
@@ -50,7 +62,7 @@ export default function ServicePage({ params }: ServicePageProps) {
             {service.excerpt && (
               <p className="text-xl text-gray-600 leading-relaxed mb-8">{service.excerpt}</p>
             )}
-            {service.techTags?.length > 0 && (
+            {service.techTags && service.techTags.length > 0 && (
               <div className="mt-8 flex flex-wrap gap-3">
                 {service.techTags.map((tag) => (
                   <span

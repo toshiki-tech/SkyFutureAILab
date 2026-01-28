@@ -3,5 +3,5 @@ export const NAV_LINKS = [
   { label: 'サービス', href: '/service' },
   { label: '事例', href: '/cases' },
   { label: 'メソッド', href: '/method' },
-  { label: '会社紹介', href: '/about' },
+  { label: 'コラム', href: '/column' },
 ]

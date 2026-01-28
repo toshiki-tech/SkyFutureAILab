@@ -1,6 +1,13 @@
 import type { Metadata } from 'next'
+import { client } from '@/sanity/lib/client'
+import {
+  caseBySlugQuery,
+  relatedMethodsQuery,
+  ctaConfigQuery,
+} from '@/lib/sanity/queries'
 import { notFound } from 'next/navigation'
 import { mockCaseDetails, mockCtaConfig, mockFeaturedMethods } from '@/lib/mockData'
+import type { Case } from '@/types'
 import Breadcrumb from '@/components/Breadcrumb'
 import StickyCTA from '@/components/StickyCTA'
 import RelatedMethods from '@/components/RelatedMethods'
@@ -13,8 +20,9 @@ interface CasePageProps {
 export async function generateMetadata({
   params,
 }: CasePageProps): Promise<Metadata> {
-  // 暂时使用静态数据，后续会替换为 Sanity 数据
-  const caseData = mockCaseDetails[params.slug]
+  // Sanityからデータを取得
+  const caseData = await client.fetch(caseBySlugQuery, { slug: params.slug }).catch(() => null)
+    || mockCaseDetails[params.slug]
 
   if (!caseData) {
     return {
@@ -28,19 +36,38 @@ export async function generateMetadata({
   }
 }
 
-export default function CasePage({ params }: CasePageProps) {
-  // 暂时使用静态数据，后续会替换为 Sanity 数据
-  const caseData = mockCaseDetails[params.slug]
-  const ctaConfig = mockCtaConfig
+export default async function CasePage({ params }: CasePageProps) {
+  const { slug } = params
+
+  // Sanityからデータを取得
+  const [sanityCase, sanityCtaConfig] = await Promise.all([
+    client.fetch(caseBySlugQuery, { slug }).catch(() => null),
+    client.fetch(ctaConfigQuery).catch(() => null),
+  ])
+
+  // Sanityデータがある場合はそちらを利用し、ない場合はモックデータを使用する
+  const caseData = (sanityCase || mockCaseDetails[slug]) as unknown as Case
+  const ctaConfig = sanityCtaConfig || mockCtaConfig
 
   if (!caseData) {
     notFound()
   }
 
-  // 简单的相关メソッド推荐（基于 techTags 交集）
-  const relatedMethods = mockFeaturedMethods.filter((method) =>
-    method.techTags?.some((tag) => caseData.techTags?.includes(tag))
-  ).slice(0, 3)
+  // 関連メソッドの取得
+  let relatedMethods = []
+  if (sanityCase && sanityCase.techTags?.length > 0) {
+    relatedMethods = await client.fetch(relatedMethodsQuery, {
+      excludeId: sanityCase._id,
+      techTags: sanityCase.techTags,
+    }).catch(() => [])
+  }
+
+  // Sanityから取得できなかった場合、または推薦結果が空の場合はモックデータから推荐
+  if (relatedMethods.length === 0) {
+    relatedMethods = mockFeaturedMethods.filter((method) =>
+      method.techTags?.some((tag) => (caseData.techTags as any[])?.includes(tag))
+    ).slice(0, 3)
+  }
 
   return (
     <div className="container mx-auto px-6 py-20 max-w-7xl">
@@ -68,7 +95,7 @@ export default function CasePage({ params }: CasePageProps) {
             {caseData.excerpt && (
               <p className="text-xl text-gray-600 leading-relaxed mb-8">{caseData.excerpt}</p>
             )}
-            {caseData.techTags?.length > 0 && (
+            {caseData.techTags && caseData.techTags.length > 0 && (
               <div className="mt-8 flex flex-wrap gap-3">
                 {caseData.techTags.map((tag) => (
                   <span

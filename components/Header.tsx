@@ -26,9 +26,20 @@ export default function Header() {
         <div className="flex items-center justify-between">
           <Link
             href="/"
-            className="text-2xl font-bold text-gray-900 hover:text-blue-600 transition-colors tracking-tight"
+            className="flex items-center gap-3 transition-opacity hover:opacity-80 group"
           >
-            SkyFuture
+            {/* Logo Icon Container */}
+            <div className="flex items-center justify-center -ml-1">
+              <img
+                src="/images/logo-icon-final.png"
+                alt="SkyFuture Icon"
+                className="h-14 w-auto object-contain"
+              />
+            </div>
+
+            <span className="text-xl md:text-3xl font-extrabold tracking-tighter text-gray-900 font-sans mt-1">
+              Sky<span className="text-accent-500">Future</span>
+            </span>
           </Link>
           <nav className="hidden md:flex items-center gap-10 text-base font-medium">
             {NAV_LINKS.map((link) => (

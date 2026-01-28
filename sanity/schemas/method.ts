@@ -18,7 +18,7 @@ export default defineType({
     defineField({
       name: 'title',
       title: 'タイトル',
-      type: 'string',1
+      type: 'string',
       validation: (Rule) => Rule.required(),
     }),
     defineField({

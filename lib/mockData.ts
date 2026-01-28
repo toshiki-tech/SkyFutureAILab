@@ -8,7 +8,7 @@ export const mockCtaConfig = {
   },
   secondaryCTA: {
     text: '無料相談',
-    link: '/contactus',
+    link: '/contact',
   },
 }
 
@@ -498,3 +498,35 @@ export const mockServiceDetails: Record<string, any> = {
     ],
   },
 }
+export const mockAllColumns: any[] = [
+  {
+    _id: 'col-1',
+    title: '2024年における生成AI活用の最新トレンド',
+    slug: { current: 'generative-ai-trends-2024' },
+    category: '生成AI',
+    author: 'SkyFuture 編集部',
+    excerpt: 'ビジネス現場で加速する生成AIの活用。最新のトレンドと、企業が取るべき戦略について解説します。',
+    techTags: ['Copilot / 生成AI', 'Azure'],
+    publishedAt: '2024-03-01',
+  },
+  {
+    _id: 'col-2',
+    title: 'Power Platformで内製化を成功させるための3つの鍵',
+    slug: { current: 'power-platform-citizen-developer-success' },
+    category: 'DX戦略',
+    author: 'SkyFuture 編集部',
+    excerpt: '市民開発者の育成とガバナンスの両立。内製化を成功に導くための組織づくりとロードマップ。',
+    techTags: ['Power Platform', 'Security / Governance'],
+    publishedAt: '2024-03-05',
+  },
+  {
+    _id: 'col-3',
+    title: 'Microsoft 365 Copilot導入前に準備すべきデータガバナンス',
+    slug: { current: 'm365-copilot-data-governance' },
+    category: 'セキュリティ',
+    author: 'SkyFuture 編集部',
+    excerpt: 'AIの力を最大限に引き出すためには、データの健全性が不可欠です。導入前に見直すべきポイント。',
+    techTags: ['Microsoft 365', 'Copilot / 生成AI', 'Security / Governance'],
+    publishedAt: '2024-03-10',
+  },
+]

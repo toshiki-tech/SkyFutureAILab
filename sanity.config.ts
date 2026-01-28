@@ -3,12 +3,12 @@ import { deskTool } from 'sanity/desk'
 import { visionTool } from '@sanity/vision'
 import { schemaTypes } from './sanity/schemas'
 
-const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID
-const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET
+const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'your-project-id'
+const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production'
 
-if (!projectId || !dataset) {
-  throw new Error(
-    'Sanity projectId/dataset missing. Set NEXT_PUBLIC_SANITY_PROJECT_ID and NEXT_PUBLIC_SANITY_DATASET.'
+if (!process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || !process.env.NEXT_PUBLIC_SANITY_DATASET) {
+  console.warn(
+    'Sanity projectId/dataset missing. Using placeholders. Set NEXT_PUBLIC_SANITY_PROJECT_ID and NEXT_PUBLIC_SANITY_DATASET in .env.local'
   )
 }
 
