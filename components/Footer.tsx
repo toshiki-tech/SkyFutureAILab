@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 export default function Footer() {
   return (
     <footer className="border-t border-gray-200 bg-white mt-16">
@@ -9,10 +11,22 @@ export default function Footer() {
               Microsoft 365・Power Platform・Dynamics 365・生成AI を活用したDX支援
             </p>
           </div>
-          <div className="flex flex-wrap gap-x-8 gap-y-4 text-sm text-gray-600">
-            <a href="/about" className="hover:text-primary-600 transition-colors whitespace-nowrap">会社紹介</a>
-            <a href="/contact" className="hover:text-primary-600 transition-colors whitespace-nowrap">お問い合わせ</a>
-            <a href="/privacy" className="hover:text-primary-600 transition-colors whitespace-nowrap">プライバシーポリシー</a>
+          <div className="flex flex-wrap gap-x-6 gap-y-3 text-sm text-gray-600">
+            <Link href="/about" className="hover:text-primary-600 transition-colors whitespace-nowrap">
+              会社紹介
+            </Link>
+            <Link href="/contact" className="hover:text-primary-600 transition-colors whitespace-nowrap">
+              お問い合わせ
+            </Link>
+            <Link href="/request" className="hover:text-primary-600 transition-colors whitespace-nowrap">
+              資料請求
+            </Link>
+            <Link href="/privacy" className="hover:text-primary-600 transition-colors whitespace-nowrap">
+              プライバシーポリシー
+            </Link>
+            <Link href="/terms" className="hover:text-primary-600 transition-colors whitespace-nowrap">
+              利用規約
+            </Link>
           </div>
         </div>
       </div>

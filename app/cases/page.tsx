@@ -9,7 +9,8 @@ import {
   industryCategoriesQuery,
   ctaConfigQuery,
 } from '@/lib/sanity/queries'
-import { mockAllCases, mockIndustryCategories, mockCtaConfig } from '@/lib/mockData'
+import { mockAllCases, mockIndustryCategories, mockCtaConfig } from '@/lib/content'
+import { Chip } from '@/components/ui'
 
 export const metadata: Metadata = {
   title: '事例 | SkyFuture AI Lab',
@@ -84,27 +85,19 @@ export default async function CasesPage({ searchParams }: CasesPageProps) {
                     </h2>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    <a
-                      href="/cases"
-                      className={`rounded-full px-5 py-2.5 text-sm font-semibold transition-all duration-200 ${!problem
-                        ? 'bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-md hover:shadow-lg hover:from-primary-700 hover:to-primary-800'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm border border-gray-200'
-                        }`}
-                    >
+                    <Chip href="/cases" active={!problem} tone="primary" size="md">
                       すべて
-                    </a>
+                    </Chip>
                     {CASE_PROBLEMS.map((item) => (
-                      <a
+                      <Chip
                         key={item}
-                        href={`/cases?problem=${encodeURIComponent(item)}${industry ? `&industry=${encodeURIComponent(industry)}` : ''
-                          }`}
-                        className={`rounded-full px-5 py-2.5 text-sm font-semibold transition-all duration-200 ${problem === item
-                          ? 'bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-md hover:shadow-lg hover:from-primary-700 hover:to-primary-800'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm border border-gray-200'
-                          }`}
+                        href={`/cases?problem=${encodeURIComponent(item)}${industry ? `&industry=${encodeURIComponent(industry)}` : ''}`}
+                        active={problem === item}
+                        tone="primary"
+                        size="md"
                       >
                         {item}
-                      </a>
+                      </Chip>
                     ))}
                   </div>
                 </div>
@@ -120,27 +113,24 @@ export default async function CasesPage({ searchParams }: CasesPageProps) {
                     </h2>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    <a
+                    <Chip
                       href={`/cases${problem ? `?problem=${encodeURIComponent(problem)}` : ''}`}
-                      className={`rounded-full px-5 py-2.5 text-sm font-semibold transition-all duration-200 ${!industry
-                        ? 'bg-gradient-to-r from-accent-600 to-accent-700 text-white shadow-md hover:shadow-lg hover:from-accent-700 hover:to-accent-800'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm border border-gray-200'
-                        }`}
+                      active={!industry}
+                      tone="accent"
+                      size="md"
                     >
                       すべて
-                    </a>
+                    </Chip>
                     {(industries as IndustryCategory[]).map((item) => (
-                      <a
+                      <Chip
                         key={item._id}
-                        href={`/cases?industry=${encodeURIComponent(item.value)}${problem ? `&problem=${encodeURIComponent(problem)}` : ''
-                          }`}
-                        className={`rounded-full px-5 py-2.5 text-sm font-semibold transition-all duration-200 ${industry === item.value
-                          ? 'bg-gradient-to-r from-accent-600 to-accent-700 text-white shadow-md hover:shadow-lg hover:from-accent-700 hover:to-accent-800'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm border border-gray-200'
-                          }`}
+                        href={`/cases?industry=${encodeURIComponent(item.value)}${problem ? `&problem=${encodeURIComponent(problem)}` : ''}`}
+                        active={industry === item.value}
+                        tone="accent"
+                        size="md"
                       >
                         {item.displayName}
-                      </a>
+                      </Chip>
                     ))}
                   </div>
                 </div>

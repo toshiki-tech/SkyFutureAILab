@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
 import SectionHero from '@/components/SectionHero'
 import MethodList from '@/components/MethodList'
+import { Chip } from '@/components/ui'
 import type { TechTag, Method } from '@/types'
 import { client } from '@/sanity/lib/client'
 import { methodsQuery } from '@/lib/sanity/queries'
-import { mockAllMethods } from '@/lib/mockData'
+import { mockAllMethods } from '@/lib/content'
 
 export const metadata: Metadata = {
   title: 'メソッド | SkyFuture AI Lab',
@@ -28,13 +29,9 @@ interface MethodsPageProps {
 export default async function MethodsPage({ searchParams }: MethodsPageProps) {
   const techTag = searchParams.techTag as TechTag | undefined
 
-  // Sanityからデータを取得
   const sanityMethods = await client.fetch(methodsQuery, { techTag: techTag || null }).catch(() => [])
-
-  // Sanityデータがある場合はそちらを利用し、ない場合はモックデータを使用する
   let methods = (sanityMethods && sanityMethods.length > 0) ? sanityMethods as unknown as Method[] : mockAllMethods as unknown as Method[]
 
-  // モックデータを使用する場合のみ、クライアントサイドでのフィルタリング（簡易版）を適用
   if (!sanityMethods || sanityMethods.length === 0) {
     if (techTag) {
       methods = methods.filter((m) => m.techTags?.includes(techTag))
@@ -45,7 +42,7 @@ export default async function MethodsPage({ searchParams }: MethodsPageProps) {
     <div className="bg-white">
       <SectionHero
         title="メソッド"
-        description="技術メソッドとベストプラクティス。Microsoft 365・Power Platform・Dynamics 365・生成AI を活用したDX支援の技术メソッドをご紹介します。"
+        description="Microsoft 365・Power Platform・生成AI を軸とした、実務で再現可能な技術メソッド集です。"
         bgImage="/images/method-hero.png"
         breadcrumbs={[
           { label: 'ホーム', href: '/' },
@@ -54,41 +51,50 @@ export default async function MethodsPage({ searchParams }: MethodsPageProps) {
       />
 
       <div className="container mx-auto px-4 sm:px-6 py-10 md:py-20 max-w-7xl">
-        <div className="mt-12">
-          <h2 className="mb-3 text-sm font-semibold text-gray-700">
-            技術タグで絞り込む
-          </h2>
+        <div className="bg-white rounded-2xl border border-gray-200/80 shadow-sm p-6 md:p-8 mb-10">
+          <div className="flex items-center gap-2 mb-4">
+            <svg className="h-5 w-5 text-accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5a1.99 1.99 0 011.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+            </svg>
+            <h2 className="text-base font-bold text-gray-900">技術タグで絞り込む</h2>
+          </div>
           <div className="flex flex-wrap gap-2">
-            <a
-              href="/method"
-              className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${!techTag
-                ? 'bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-md'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm'
-                }`}
-            >
+            <Chip href="/method" active={!techTag} tone="accent" size="md">
               すべて
-            </a>
+            </Chip>
             {TECH_TAGS.map((item) => (
-              <a
+              <Chip
                 key={item}
                 href={`/method?techTag=${encodeURIComponent(item)}`}
-                className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${techTag === item
-                  ? 'bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-md'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm'
-                  }`}
+                active={techTag === item}
+                tone="accent"
+                size="md"
               >
                 {item}
-              </a>
+              </Chip>
             ))}
           </div>
         </div>
 
-        <div className="mt-16">
+        <div className="mb-6">
+          <p className="text-sm text-gray-600">
+            {methods.length > 0 ? (
+              <>
+                <span className="font-semibold text-gray-900">{methods.length}</span> 件のメソッドが見つかりました
+              </>
+            ) : (
+              '該当するメソッドがありません'
+            )}
+          </p>
+        </div>
+
+        <div className="mt-8">
           {methods.length > 0 ? (
             <MethodList methods={methods} />
           ) : (
-            <div className="text-center py-12 text-gray-500">
-              <p>メソッド情報を準備中です。</p>
+            <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center">
+              <p className="text-gray-600 text-lg">該当するメソッドが見つかりませんでした</p>
+              <p className="text-gray-500 text-sm mt-2">別の条件で検索してみてください</p>
             </div>
           )}
         </div>

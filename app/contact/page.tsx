@@ -3,49 +3,137 @@
 import React, { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { FormField, ConsentCheckbox } from '@/components/ui'
+import { validateEmail, validatePhone, validateRequired } from '@/lib/validators'
 
-// フォームのステップ定義
-type Step = 1 | 2 | 3
+type Step = 1 | 2 | 3 | 4
+
+const STEP_LABELS: Record<1 | 2 | 3, string> = {
+  1: '会社情報',
+  2: 'お客様情報',
+  3: 'ご相談内容',
+}
+
+type FormState = {
+  type: string
+  company: string
+  department: string
+  lastName: string
+  firstName: string
+  email: string
+  phone: string
+  content: string
+  privacy: boolean
+  website: string
+}
+
+type Errors = Partial<Record<keyof FormState, string>>
+
+const INITIAL: FormState = {
+  type: 'AI導入相談',
+  company: '',
+  department: '',
+  lastName: '',
+  firstName: '',
+  email: '',
+  phone: '',
+  content: '',
+  privacy: false,
+  website: '',
+}
+
+function validateStep(step: 1 | 2 | 3, data: FormState): Errors {
+  const errors: Errors = {}
+  if (step === 1) {
+    const err = validateRequired(data.company, '会社名')
+    if (err) errors.company = err
+  }
+  if (step === 2) {
+    const lastErr = validateRequired(data.lastName, '姓')
+    if (lastErr) errors.lastName = lastErr
+    const firstErr = validateRequired(data.firstName, '名')
+    if (firstErr) errors.firstName = firstErr
+    const emailErr = validateEmail(data.email)
+    if (emailErr) errors.email = emailErr
+    const phoneErr = validatePhone(data.phone, false)
+    if (phoneErr) errors.phone = phoneErr
+  }
+  if (step === 3) {
+    const contentErr = validateRequired(data.content, 'ご相談内容')
+    if (contentErr) errors.content = contentErr
+    if (!data.privacy) errors.privacy = '個人情報保護方針への同意が必要です'
+  }
+  return errors
+}
 
 export default function ContactPage() {
   const [step, setStep] = useState<Step>(1)
-  const [formData, setFormData] = useState({
-    type: 'consulting',
-    company: '',
-    department: '',
-    lastName: '',
-    firstName: '',
-    email: '',
-    phone: '',
-    content: '',
-    privacy: false
-  })
+  const [data, setData] = useState<FormState>(INITIAL)
+  const [errors, setErrors] = useState<Errors>({})
 
-  // 入力変更ハンドラ
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target
-    if (type === 'checkbox') {
-      const checked = (e.target as HTMLInputElement).checked
-      setFormData(prev => ({ ...prev, [name]: checked }))
-    } else {
-      setFormData(prev => ({ ...prev, [name]: value }))
+  const update = <K extends keyof FormState>(key: K, value: FormState[K]) => {
+    setData((prev) => ({ ...prev, [key]: value }))
+    if (errors[key]) {
+      setErrors((prev) => {
+        const next = { ...prev }
+        delete next[key]
+        return next
+      })
     }
   }
 
-  // 送信処理（モック）
+  const goNext = () => {
+    if (step >= 3) return
+    const e = validateStep(step as 1 | 2 | 3, data)
+    if (Object.keys(e).length > 0) {
+      setErrors(e)
+      return
+    }
+    setErrors({})
+    setStep((step + 1) as Step)
+  }
+  const goPrev = () => {
+    if (step <= 1) return
+    setErrors({})
+    setStep((step - 1) as Step)
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (step === 2) {
-      setStep(3)
+    if (step !== 3) return
+    const allErrors: Errors = {
+      ...validateStep(1, data),
+      ...validateStep(2, data),
+      ...validateStep(3, data),
+    }
+    if (Object.keys(allErrors).length > 0) {
+      setErrors(allErrors)
+      return
+    }
+    if (data.website) {
+      // Honeypot triggered — silently drop
+      return
+    }
+    console.log('[contact] submit', {
+      ...data,
+      website: undefined,
+    })
+    setStep(4)
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
+    if (e.key !== 'Enter') return
+    const target = e.target as HTMLElement
+    if (target.tagName === 'TEXTAREA') return
+    if (step !== 3) {
+      e.preventDefault()
     }
   }
 
-  const nextStep = () => setStep(2)
-  const prevStep = () => setStep(1)
+  const isInputStep = step >= 1 && step <= 3
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
-      {/* ヒーローセクション */}
       <div className="bg-gradient-to-br from-[#1A213E] to-[#2D3661] py-16 text-white text-center">
         <h1 className="mb-4 text-4xl font-bold tracking-tight">Contact</h1>
         <p className="text-xl text-blue-100/80">ご相談・お問い合わせフォーム</p>
@@ -53,8 +141,6 @@ export default function ContactPage() {
 
       <div className="container mx-auto max-w-7xl px-6 py-16">
         <div className="grid gap-16 lg:grid-cols-2">
-
-          {/* 左カラム：情報と信頼 */}
           <div className="space-y-12">
             <div>
               <h2 className="mb-6 text-3xl font-bold text-gray-900 leading-tight">
@@ -70,7 +156,7 @@ export default function ContactPage() {
                   '要件が固まっていない状態での壁打ちをしたい',
                   '具体的な費用感やスケジュールを知りたい',
                   '導入済みのツールの活用方法を相談したい',
-                  '社内教育やガバナンス構築に困っている'
+                  '社内教育やガバナンス構築に困っている',
                 ].map((text, i) => (
                   <li key={i} className="flex items-start gap-3">
                     <div className="flex-shrink-0 mt-1">
@@ -93,64 +179,116 @@ export default function ContactPage() {
               />
             </div>
 
-            {/* 信頼性を示すセクション */}
             <div>
               <p className="mb-6 text-sm font-bold text-gray-400 uppercase tracking-widest text-center lg:text-left">
                 SUPPORTING VARIOUS APPLICATIONS
               </p>
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-8 opacity-60">
-                {['Microsoft 365', 'Power Platform', 'Dynamics 365', 'Azure OpenAI', 'Copilot'].map(tech => (
+                {['Microsoft 365', 'Power Platform', 'Dynamics 365', 'Azure OpenAI', 'Copilot'].map((tech) => (
                   <span key={tech} className="text-xl font-bold text-gray-500">{tech}</span>
                 ))}
               </div>
             </div>
           </div>
 
-          {/* 右カラム：フォーム本体 */}
           <div className="relative">
-            {step !== 3 ? (
+            {isInputStep ? (
               <div className="sticky top-24 rounded-3xl bg-white p-8 shadow-2xl shadow-blue-900/10 border border-gray-100">
-                {/* ステップ表示 */}
                 <div className="mb-10">
-                  <div className="flex justify-between items-center px-4 relative">
-                    <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gray-100 -translate-y-1/2 z-0"></div>
-                    <div className={`relative z-10 w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 ${step >= 1 ? 'bg-blue-600 text-white shadow-lg' : 'bg-white border-2 border-gray-200 text-gray-400'}`}>1</div>
-                    <div className={`relative z-10 w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 ${step >= 2 ? 'bg-blue-600 text-white shadow-lg' : 'bg-white border-2 border-gray-200 text-gray-400'}`}>2</div>
-                    <div className={`relative z-10 w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 ${step >= 3 ? 'bg-green-500 text-white shadow-lg' : 'bg-white border-2 border-gray-200 text-gray-400'}`}>✓</div>
+                  <div className="mb-3 flex items-center justify-between text-xs font-bold text-gray-400 uppercase tracking-widest">
+                    <span>Step {step} / 3</span>
+                    <span className="text-accent-600">{STEP_LABELS[step as 1 | 2 | 3]}</span>
                   </div>
-                  <div className="flex justify-between mt-2 text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-wider">
-                    <span className={step >= 1 ? 'text-blue-600' : ''}>会社情報</span>
-                    <span className={step >= 2 ? 'text-blue-600' : ''}>お客様・内容</span>
-                    <span className={step >= 3 ? 'text-blue-600' : ''}>送信完了</span>
+                  <div className="flex items-center gap-2" aria-hidden="true">
+                    {[1, 2, 3].map((n) => (
+                      <div
+                        key={n}
+                        className={`h-1.5 flex-1 rounded-full transition-colors duration-300 ${
+                          step >= n ? 'bg-accent-500' : 'bg-gray-200'
+                        }`}
+                      />
+                    ))}
                   </div>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form
+                  onSubmit={handleSubmit}
+                  onKeyDown={handleKeyDown}
+                  className="space-y-6"
+                  noValidate
+                >
+                  {/* Honeypot */}
+                  <div aria-hidden="true" className="hidden">
+                    <label htmlFor="contact-website">Website</label>
+                    <input
+                      id="contact-website"
+                      name="website"
+                      type="text"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      value={data.website}
+                      onChange={(e) => update('website', e.target.value)}
+                    />
+                  </div>
+
                   {step === 1 && (
                     <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
-                      <div>
-                        <label className="mb-2 block text-sm font-bold text-gray-700">お問い合わせ種別 <span className="ml-1 text-red-500">必須</span></label>
+                      <fieldset className="space-y-2">
+                        <legend className="block text-sm font-bold text-gray-700">
+                          お問い合わせ種別
+                          <span className="ml-1 text-error-500" aria-hidden="true">*</span>
+                        </legend>
                         <div className="grid grid-cols-2 gap-4">
-                          {['AI導入相談', 'DX支援・教育', '協業のご提案', 'その他'].map(type => (
-                            <label key={type} className={`relative flex cursor-pointer items-center justify-center rounded-xl border-2 p-4 transition-all duration-200 ${formData.type === type ? 'border-blue-600 bg-blue-50 text-blue-600' : 'border-gray-100 hover:border-gray-200'}`}>
-                              <input type="radio" name="type" value={type} className="sr-only" onChange={handleChange} checked={formData.type === type} />
+                          {['AI導入相談', 'DX支援・教育', '協業のご提案', 'その他'].map((type) => (
+                            <label
+                              key={type}
+                              className={`relative flex cursor-pointer items-center justify-center rounded-xl border-2 p-4 transition-all duration-200 ${
+                                data.type === type
+                                  ? 'border-accent-500 bg-accent-50 text-accent-700'
+                                  : 'border-gray-100 hover:border-gray-300'
+                              }`}
+                            >
+                              <input
+                                type="radio"
+                                name="type"
+                                value={type}
+                                className="sr-only"
+                                checked={data.type === type}
+                                onChange={() => update('type', type)}
+                              />
                               <span className="text-sm font-bold">{type}</span>
                             </label>
                           ))}
                         </div>
-                      </div>
+                      </fieldset>
 
-                      <div>
-                        <label className="mb-2 block text-sm font-bold text-gray-700">会社名 <span className="ml-1 text-red-500">必須</span></label>
-                        <input name="company" value={formData.company} onChange={handleChange} placeholder="株式会社スカイフューチャー" className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 focus:border-blue-600 focus:bg-white focus:outline-none transition-all" required />
-                      </div>
+                      <FormField
+                        id="contact-company"
+                        name="company"
+                        label="会社名"
+                        required
+                        autoComplete="organization"
+                        placeholder="株式会社スカイフューチャー"
+                        value={data.company}
+                        onChange={(v) => update('company', v)}
+                        error={errors.company}
+                      />
 
-                      <div>
-                        <label className="mb-2 block text-sm font-bold text-gray-700">部署名 <span className="ml-1 text-gray-400">任意</span></label>
-                        <input name="department" value={formData.department} onChange={handleChange} placeholder="DX推進部" className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 focus:border-blue-600 focus:bg-white focus:outline-none transition-all" />
-                      </div>
+                      <FormField
+                        id="contact-department"
+                        name="department"
+                        label="部署名"
+                        autoComplete="organization-title"
+                        placeholder="DX推進部"
+                        value={data.department}
+                        onChange={(v) => update('department', v)}
+                      />
 
-                      <button type="button" onClick={nextStep} className="w-full rounded-2xl bg-blue-600 py-4 text-lg font-bold text-white shadow-xl hover:bg-blue-700 transition-all hover:scale-[1.02] active:scale-95">
+                      <button
+                        type="button"
+                        onClick={goNext}
+                        className="w-full rounded-2xl bg-primary-900 py-4 text-lg font-bold text-white shadow-xl hover:bg-primary-800 transition-all hover:scale-[1.02] active:scale-95"
+                      >
                         次へ進む
                       </button>
                     </div>
@@ -159,43 +297,110 @@ export default function ContactPage() {
                   {step === 2 && (
                     <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
                       <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="mb-2 block text-sm font-bold text-gray-700">姓 <span className="ml-1 text-red-500">必須</span></label>
-                          <input name="lastName" value={formData.lastName} onChange={handleChange} placeholder="山田" className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 focus:border-blue-600 focus:bg-white focus:outline-none transition-all" required />
-                        </div>
-                        <div>
-                          <label className="mb-2 block text-sm font-bold text-gray-700">名 <span className="ml-1 text-red-500">必須</span></label>
-                          <input name="firstName" value={formData.firstName} onChange={handleChange} placeholder="太郎" className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 focus:border-blue-600 focus:bg-white focus:outline-none transition-all" required />
-                        </div>
+                        <FormField
+                          id="contact-lastName"
+                          name="lastName"
+                          label="姓"
+                          required
+                          autoComplete="family-name"
+                          placeholder="山田"
+                          value={data.lastName}
+                          onChange={(v) => update('lastName', v)}
+                          error={errors.lastName}
+                        />
+                        <FormField
+                          id="contact-firstName"
+                          name="firstName"
+                          label="名"
+                          required
+                          autoComplete="given-name"
+                          placeholder="太郎"
+                          value={data.firstName}
+                          onChange={(v) => update('firstName', v)}
+                          error={errors.firstName}
+                        />
                       </div>
 
-                      <div>
-                        <label className="mb-2 block text-sm font-bold text-gray-700">メールアドレス <span className="ml-1 text-red-500">必須</span></label>
-                        <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="name@company.com" className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 focus:border-blue-600 focus:bg-white focus:outline-none transition-all" required />
-                      </div>
+                      <FormField
+                        id="contact-email"
+                        name="email"
+                        type="email"
+                        label="メールアドレス"
+                        required
+                        autoComplete="email"
+                        placeholder="name@company.com"
+                        value={data.email}
+                        onChange={(v) => update('email', v)}
+                        error={errors.email}
+                      />
 
-                      <div>
-                        <label className="mb-2 block text-sm font-bold text-gray-700">電話番号 <span className="ml-1 text-gray-400">任意</span></label>
-                        <input type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder="03-1234-5678" className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 focus:border-blue-600 focus:bg-white focus:outline-none transition-all" />
-                      </div>
-
-                      <div>
-                        <label className="mb-2 block text-sm font-bold text-gray-700">ご相談内容 <span className="ml-1 text-red-500">必須</span></label>
-                        <textarea name="content" value={formData.content} onChange={handleChange} placeholder="具体的な課題、検討時期、ご予算などお気軽にご記入ください" rows={5} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 focus:border-blue-600 focus:bg-white focus:outline-none transition-all resize-none" required />
-                      </div>
-
-                      <div className="flex items-center gap-3">
-                        <input type="checkbox" id="privacy" name="privacy" checked={formData.privacy} onChange={handleChange} className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500" required />
-                        <label htmlFor="privacy" className="text-sm text-gray-600">
-                          <Link href="/privacy" className="text-blue-600 underline">プライバシーポリシー</Link>に同意する
-                        </label>
-                      </div>
+                      <FormField
+                        id="contact-phone"
+                        name="phone"
+                        type="tel"
+                        label="電話番号"
+                        autoComplete="tel"
+                        placeholder="03-1234-5678"
+                        value={data.phone}
+                        onChange={(v) => update('phone', v)}
+                        error={errors.phone}
+                      />
 
                       <div className="flex gap-4">
-                        <button type="button" onClick={prevStep} className="flex-1 rounded-2xl border-2 border-gray-200 py-4 font-bold text-gray-400 hover:bg-gray-50 transition-all">
+                        <button
+                          type="button"
+                          onClick={goPrev}
+                          className="flex-1 rounded-2xl border-2 border-gray-200 py-4 font-bold text-gray-500 hover:bg-gray-50 transition-all"
+                        >
                           戻る
                         </button>
-                        <button type="submit" className="flex-[2] rounded-2xl bg-blue-600 py-4 text-lg font-bold text-white shadow-xl hover:bg-blue-700 transition-all hover:scale-[1.02] active:scale-95">
+                        <button
+                          type="button"
+                          onClick={goNext}
+                          className="flex-[2] rounded-2xl bg-primary-900 py-4 text-lg font-bold text-white shadow-xl hover:bg-primary-800 transition-all hover:scale-[1.02] active:scale-95"
+                        >
+                          次へ進む
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {step === 3 && (
+                    <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
+                      <FormField
+                        id="contact-content"
+                        name="content"
+                        type="textarea"
+                        label="ご相談内容"
+                        required
+                        placeholder="具体的な課題、検討時期、ご予算などお気軽にご記入ください"
+                        rows={6}
+                        value={data.content}
+                        onChange={(v) => update('content', v)}
+                        error={errors.content}
+                      />
+
+                      <ConsentCheckbox
+                        id="contact-privacy"
+                        name="privacy"
+                        checked={data.privacy}
+                        onChange={(c) => update('privacy', c)}
+                        error={errors.privacy}
+                      />
+
+                      <div className="flex gap-4">
+                        <button
+                          type="button"
+                          onClick={goPrev}
+                          className="flex-1 rounded-2xl border-2 border-gray-200 py-4 font-bold text-gray-500 hover:bg-gray-50 transition-all"
+                        >
+                          戻る
+                        </button>
+                        <button
+                          type="submit"
+                          disabled={!data.privacy}
+                          className="flex-[2] rounded-2xl bg-accent-600 py-4 text-lg font-bold text-white shadow-xl transition-all hover:bg-accent-700 hover:scale-[1.02] active:scale-95 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500 disabled:hover:scale-100 disabled:shadow-none"
+                        >
                           同意して送信する
                         </button>
                       </div>
@@ -204,20 +409,27 @@ export default function ContactPage() {
                 </form>
               </div>
             ) : (
-              <div className="sticky top-24 rounded-3xl bg-white p-12 text-center shadow-2xl shadow-blue-900/10 border border-gray-100 animate-in zoom-in-95 duration-500">
+              <div
+                className="sticky top-24 rounded-3xl bg-white p-12 text-center shadow-2xl shadow-blue-900/10 border border-gray-100 animate-in zoom-in-95 duration-500"
+                role="status"
+                aria-live="polite"
+              >
                 <div className="mb-6 flex justify-center">
-                  <div className="flex h-20 w-20 items-center justify-center rounded-full bg-green-100 text-green-500">
+                  <div className="flex h-20 w-20 items-center justify-center rounded-full bg-success-50 text-success-700">
                     <svg className="h-10 w-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
                 </div>
-                <h2 className="mb-4 text-3xl font-bold text-gray-900">送信が完了しました</h2>
+                <h2 className="mb-4 text-3xl font-bold text-gray-900">送信完了</h2>
                 <p className="mb-8 text-gray-600 leading-relaxed text-lg">
-                  お問い合わせありがとうございます。<br />
-                  担当者より、折り返しご連絡を差し上げます。
+                  3 営業日以内にご返信します。<br />
+                  お急ぎの場合はお電話でもご連絡ください。
                 </p>
-                <Link href="/" className="inline-block rounded-2xl bg-gray-900 px-10 py-4 font-bold text-white hover:bg-gray-800 transition-all hover:scale-105 shadow-xl">
+                <Link
+                  href="/"
+                  className="inline-block rounded-2xl bg-primary-900 px-10 py-4 font-bold text-white hover:bg-primary-800 transition-all hover:scale-105 shadow-xl"
+                >
                   トップページへ戻る
                 </Link>
               </div>
