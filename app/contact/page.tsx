@@ -175,6 +175,7 @@ export default function ContactPage() {
                 src="/images/contact-illustration.png"
                 alt="Business Consultation"
                 fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-contain p-8"
               />
             </div>

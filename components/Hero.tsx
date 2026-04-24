@@ -17,6 +17,7 @@ export default function Hero({ ctaConfig }: HeroProps) {
         src="/images/about-hero-visionary.png"
         alt="SkyFuture Visionary Innovation"
         fill
+        sizes="100vw"
         className="object-cover object-[center_30%] opacity-70"
         priority
       />

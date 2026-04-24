@@ -14,7 +14,7 @@ const allMethods: Method[] = [
     techTags: ['Microsoft 365', 'Security / Governance'],
     excerpt:
       'チームの乱立・ゲスト誤招待・放置チャネルを未然に防ぐ、命名規則 / ライフサイクル / ゲストアクセス / 機密ラベル / 棚卸しの設計ガイド。',
-    publishedAt: '2024-02-12',
+    publishedAt: '2025-03-25',
     featured: true,
     content: [
       h3('適用シーン'),
@@ -50,7 +50,7 @@ const allMethods: Method[] = [
     techTags: ['Microsoft 365'],
     excerpt:
       'ハブサイト / コミュニケーションサイト / チームサイト / ドキュメントライブラリの 4 層で、検索性と権限管理を両立する設計手法。',
-    publishedAt: '2024-02-15',
+    publishedAt: '2025-04-22',
     content: [
       h3('適用シーン'),
       p(
@@ -87,7 +87,7 @@ const allMethods: Method[] = [
     techTags: ['Power Platform', 'Microsoft 365'],
     excerpt:
       'モデル駆動型 + Dataverse + Power Automate で、紙 / Excel 稟議をローコードで置き換える標準レシピ。',
-    publishedAt: '2024-02-18',
+    publishedAt: '2025-05-13',
     featured: true,
     content: [
       h3('適用シーン'),
@@ -124,7 +124,7 @@ const allMethods: Method[] = [
     techTags: ['Power Platform', 'Dataverse / D365'],
     excerpt:
       '部門別 SharePoint リストから脱却し、Dataverse でマスタ / トランザクション / 監査ログを統合する実践設計。',
-    publishedAt: '2024-02-22',
+    publishedAt: '2025-06-02',
     content: [
       h3('適用シーン'),
       p(
@@ -160,7 +160,7 @@ const allMethods: Method[] = [
     techTags: ['Copilot / 生成AI', 'Microsoft 365'],
     excerpt:
       'ライセンス配布だけでは定着しない Copilot を、準備 → パイロット → 全社展開の 3 フェーズで確実に活用する手順書。',
-    publishedAt: '2024-02-26',
+    publishedAt: '2025-06-24',
     featured: true,
     content: [
       h3('適用シーン'),
@@ -196,7 +196,7 @@ const allMethods: Method[] = [
     techTags: ['Copilot / 生成AI'],
     excerpt:
       'Context / Goal / Source / Format の 4 要素を揃えるプロンプトテンプレートと、業務別の具体例集。',
-    publishedAt: '2024-03-01',
+    publishedAt: '2025-07-14',
     content: [
       h3('適用シーン'),
       p(
@@ -230,7 +230,7 @@ const allMethods: Method[] = [
     techTags: ['Azure', 'Copilot / 生成AI', 'Security / Governance'],
     excerpt:
       '金融 / 医療 / 公共など閉域要件のある業種で、Azure OpenAI Service を Private Endpoint + Firewall で完全閉域化する構成レシピ。',
-    publishedAt: '2024-03-05',
+    publishedAt: '2025-08-05',
     content: [
       h3('適用シーン'),
       p(
@@ -267,7 +267,7 @@ const allMethods: Method[] = [
     techTags: ['Dataverse / D365'],
     excerpt:
       '既存 SFA / 表計算 SFA から Dynamics 365 Sales へ移行する際の要件整理・データ移行・定着化チェックリスト。',
-    publishedAt: '2024-03-08',
+    publishedAt: '2025-09-01',
     content: [
       h3('適用シーン'),
       p(
@@ -308,7 +308,7 @@ const allMethods: Method[] = [
     techTags: ['Security / Governance', 'Microsoft 365'],
     excerpt:
       '機密ラベル設計 → 自動分類ルール → DLP ポリシー → 監査レビューまで、最小構成で始める実践手順。',
-    publishedAt: '2024-03-12',
+    publishedAt: '2025-09-25',
     content: [
       h3('適用シーン'),
       p(
@@ -345,7 +345,7 @@ const allMethods: Method[] = [
     techTags: ['Integration（API連携など）', 'Power Platform'],
     excerpt:
       '基幹システム / SaaS との API 連携で失敗しないための、認証 / 再試行 / エラー通知 / ログ保全の標準設計。',
-    publishedAt: '2024-03-15',
+    publishedAt: '2025-10-15',
     content: [
       h3('適用シーン'),
       p(

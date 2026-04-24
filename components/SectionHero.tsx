@@ -23,6 +23,7 @@ export default function SectionHero({
                         src={bgImage}
                         alt={title}
                         fill
+                        sizes="100vw"
                         className="object-cover opacity-50"
                         priority
                     />

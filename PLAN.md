@@ -419,5 +419,10 @@ components/ui/ConsentCheckbox.tsx  # 可选
     - `app/request/page.tsx` 重写:单页表单 + `validateAll` + 姓/名拆分 grid-cols-2 + email 字段 hint("企業ドメインのメールアドレスを推奨します")+ honeypot + 未勾选时 disabled + 提交后 inline 成功卡(替换整个 form,`role="status"`)
     - 所有 form 加 `noValidate`,校验全由 React state 驱动
     - `npx tsc --noEmit` 通过;`npm run build` 17 路由通过;`curl /contact /request` 200;输出含 `aria-required="true"`、`name="website"` honeypot、`企業ドメイン` hint 文案
+  - **Block 12 — 性能 / 响应式 / 字体**
+    - 字体:`next/font/google` 自托管 Noto Sans JP(weight 400/500/700、`display: swap`、CSS 变量 `--font-noto-sans-jp`),`tailwind.config.ts` fontFamily.sans 头部插入,`app/globals.css` 旧 system font 栈移除
+    - 图片:全部 10 个 `<Image fill>` 补 `sizes`(Hero / SectionHero 100vw,卡片 40/33vw,logo 160px,本文 768px,CEO 40vw 等);`priority` 仅保留在首屏 Hero / SectionHero / Header logo;Header `<img>` → `next/image`,build 警告清零;移除 DocumentMockup 未使用 import
+    - 响应式静态审计:固定 px 宽 2 处均安全(`w-full` 内 / `lg:` 限定)、grid-cols-4+ 全部带响应式前缀、大标题全部 `text-3xl md:…`、Footer `flex-wrap` + 每项 `whitespace-nowrap`、`<html>`/`<body>` 双 `overflow-x-hidden` 保底、公司概要表用 `flex flex-col` 堆叠
+    - `npm run build` 17 路由通过,无警告;新建 `LIGHTHOUSE_REPORT.md` 记录优化项 + 手动验收清单(真实 Lighthouse 跑分与实机 mobile 验收需在本地浏览器执行)
 - 进行中:无
-- 下一步:**Block 12 — 性能 / 响应式 / 字体**(Noto Sans JP via `next/font`、响应式验收、Lighthouse 通过)
+- 下一步:Block 1–12 全部 UI-ready,站点可视为交付候选。后续按需求跟进 Sanity CMS 内容录入 / 邮件/表单后端 / CI。

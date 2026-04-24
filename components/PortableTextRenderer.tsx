@@ -66,6 +66,7 @@ export default function PortableTextRenderer({
                     alt={value?.alt || ''}
                     width={1200}
                     height={800}
+                    sizes="(max-width: 768px) 100vw, 768px"
                     className="h-auto w-full rounded-xl"
                   />
                 </div>

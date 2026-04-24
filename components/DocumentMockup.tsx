@@ -1,7 +1,5 @@
 'use client'
 
-import Image from 'next/image'
-
 export default function DocumentMockup() {
     return (
         <div className="relative w-full max-w-[480px] aspect-[4/3] perspective-1000">

@@ -177,7 +177,7 @@ export default function RequestDocumentPage() {
                 <div className="grid grid-cols-3 md:grid-cols-6 gap-8 items-center opacity-70 grayscale hover:grayscale-0 transition-all duration-500">
                   {LOGOS.map((logo) => (
                     <div key={logo.name} className="relative h-8 w-full">
-                      <Image src={logo.path} alt={logo.name} fill className="object-contain" />
+                      <Image src={logo.path} alt={logo.name} fill sizes="120px" className="object-contain" />
                     </div>
                   ))}
                 </div>

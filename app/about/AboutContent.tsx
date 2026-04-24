@@ -18,6 +18,7 @@ function ClientLogo({ client }: { client: { name: string; slug: string } }) {
                         src={`/images/logos/${client.slug}.png`}
                         alt={client.name}
                         fill
+                        sizes="(max-width: 768px) 50vw, (max-width: 1024px) 25vw, 160px"
                         className="object-contain p-2"
                         onError={() => setImageError(true)}
                     />
@@ -94,6 +95,7 @@ export default function AboutContent() {
                                 src="/images/ceo-portrait.png"
                                 alt="Representative Director 中村拓実"
                                 fill
+                                sizes="(max-width: 1024px) 100vw, 40vw"
                                 className="object-cover"
                             />
                             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-gray-900/80 to-transparent p-8 text-white">

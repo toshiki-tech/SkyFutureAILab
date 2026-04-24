@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { NAV_LINKS } from '@/lib/constants'
 
 export default function Header() {
@@ -30,23 +31,26 @@ export default function Header() {
           >
             {/* Logo Icon Container */}
             <div className="flex items-center justify-center -ml-1">
-              <img
+              <Image
                 src="/images/logo-icon-final.png"
                 alt="SkyFuture Icon"
+                width={56}
+                height={56}
+                priority
                 className="h-14 w-auto object-contain"
               />
             </div>
 
-            <span className="text-xl md:text-3xl font-extrabold tracking-tighter text-gray-900 font-sans mt-1">
+            <span className="text-xl lg:text-3xl font-extrabold tracking-tighter text-gray-900 font-sans mt-1">
               Sky<span className="text-accent-500">Future</span>
             </span>
           </Link>
-          <nav className="hidden md:flex items-center gap-10 text-base font-medium">
+          <nav className="hidden lg:flex items-center gap-8 xl:gap-10 text-base font-medium">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="relative text-gray-700 hover:text-primary-600 transition-colors py-2 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary-600 hover:after:w-full after:transition-all duration-300"
+                className="relative whitespace-nowrap text-gray-700 hover:text-primary-600 transition-colors py-2 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary-600 hover:after:w-full after:transition-all duration-300"
               >
                 {link.label}
               </Link>
@@ -54,14 +58,14 @@ export default function Header() {
           </nav>
           <div className="flex items-center gap-4">
             {/* 桌面端搜索框 */}
-            <form onSubmit={handleSearch} className="hidden md:flex items-center">
+            <form onSubmit={handleSearch} className="hidden lg:flex items-center">
               <div className="relative">
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="検索"
-                  className="pl-10 pr-4 py-2 w-56 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                  className="pl-10 pr-4 py-2 w-48 xl:w-56 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
                 />
                 <svg
                   className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
@@ -78,8 +82,8 @@ export default function Header() {
                 </svg>
               </div>
             </form>
-            {/* 移动端按钮组 */}
-            <div className="md:hidden flex items-center gap-2">
+            {/* 移动端 / タブレット按钮组 */}
+            <div className="lg:hidden flex items-center gap-2">
               {/* 移动端搜索按钮 */}
               <button
                 onClick={() => {
@@ -147,7 +151,7 @@ export default function Header() {
         </div>
         {/* 移动端搜索框 */}
         {isMobileSearchOpen && (
-          <div className="md:hidden mt-4 pb-2">
+          <div className="lg:hidden mt-4 pb-2">
             <form onSubmit={handleSearch} className="relative">
               <input
                 type="text"
@@ -175,7 +179,7 @@ export default function Header() {
         )}
         {/* 移动端菜单 */}
         {isMobileMenuOpen && (
-          <nav className="md:hidden mt-4 pb-4 border-t border-gray-200 pt-4">
+          <nav className="lg:hidden mt-4 pb-4 border-t border-gray-200 pt-4">
             <div className="flex flex-col gap-2">
               {NAV_LINKS.map((link) => (
                 <Link

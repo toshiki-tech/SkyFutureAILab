@@ -9,7 +9,7 @@ const allServices: Service[] = [
     techTags: ['Copilot / 生成AI', 'Microsoft 365'],
     excerpt:
       'Microsoft 365 Copilot のライセンス導入だけでなく、データガバナンス整備・ユースケース設計・定着化までをワンストップで支援します。',
-    publishedAt: '2024-01-10',
+    publishedAt: '2025-01-15',
     content: [
       h3('このサービスで解決できる課題'),
       bullet('Copilot ライセンスを購入したが現場で使われない'),
@@ -37,7 +37,7 @@ const allServices: Service[] = [
     techTags: ['Power Platform', 'Microsoft 365', 'Security / Governance'],
     excerpt:
       'Power Apps / Power Automate を現場主導で作り続けられる体制を構築。ガバナンスとスピードを両立する内製化フレームワーク。',
-    publishedAt: '2024-01-12',
+    publishedAt: '2025-02-04',
     content: [
       h3('このサービスで解決できる課題'),
       bullet('情シスがボトルネックとなり現場の改善要望が消化できない'),
@@ -65,7 +65,7 @@ const allServices: Service[] = [
     techTags: ['Azure', 'Copilot / 生成AI', 'Security / Governance'],
     excerpt:
       '金融・医療・公共など閉域要件がある業種向けに、Azure OpenAI Service を Private Endpoint で安全に構築。RAG / プロンプト監査まで一式対応。',
-    publishedAt: '2024-01-14',
+    publishedAt: '2025-02-20',
     content: [
       h3('このサービスで解決できる課題'),
       bullet('ChatGPT の社内利用が情報漏洩懸念から禁止されている'),
@@ -93,7 +93,7 @@ const allServices: Service[] = [
     techTags: ['Dataverse / D365', 'Power Platform'],
     excerpt:
       'Salesforce / 表計算 SFA から Dynamics 365 Sales / Customer Service への移行を、要件整理から定着化まで一貫支援。',
-    publishedAt: '2024-01-16',
+    publishedAt: '2025-03-10',
     content: [
       h3('このサービスで解決できる課題'),
       bullet('既存 SFA / CRM の費用が膨らみ、ROI が見合わなくなっている'),
@@ -122,7 +122,7 @@ const allServices: Service[] = [
     techTags: ['Security / Governance', 'Microsoft 365', 'Azure'],
     excerpt:
       'Microsoft 365 / Azure のテナントを多角的に診断し、脆弱点・改善余地・優先度付きアクションプランを 1 ヶ月で提示します。',
-    publishedAt: '2024-01-18',
+    publishedAt: '2025-04-08',
     content: [
       h3('このサービスで解決できる課題'),
       bullet('Microsoft 365 を長年運用しているがセキュリティ設定が適切か不安'),

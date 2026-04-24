@@ -1,6 +1,15 @@
 import type { Case } from '@/types'
+import type { SanityImage } from '@/types/sanity'
 import { p, bold, bullet, h3 } from './portableText'
 import { industryByValue } from './industryCategories'
+
+const unsplashImage = (id: string, alt: string): SanityImage => ({
+  asset: {
+    _id: `image-${id}`,
+    url: `https://images.unsplash.com/photo-${id}?w=1200&q=80&auto=format&fit=crop`,
+  },
+  alt,
+})
 
 /**
  * Each entry carries both list-level metadata AND full `content`.
@@ -17,7 +26,8 @@ const allCases: Case[] = [
     techTags: ['Power Platform', 'Microsoft 365'],
     excerpt:
       '紙とExcelで運用していた現場日報を Power Apps + SharePoint に移行。日報作成時間を 1 時間/日 → 15 分/日に短縮し、月次レポート作成を 3 日 → 半日へ圧縮。',
-    publishedAt: '2024-03-04',
+    featuredImage: unsplashImage('1541888946425-d81bb19240f5', '建設現場の青写真とヘルメット'),
+    publishedAt: '2025-06-18',
     featured: true,
     content: [
       h3('プロジェクト背景'),
@@ -64,7 +74,8 @@ const allCases: Case[] = [
     techTags: ['Copilot / 生成AI', 'Microsoft 365', 'Power Platform'],
     excerpt:
       '品質異常発生時の原因分析を属人化から脱却。Copilot for M365 と Power BI を組み合わせ、分析時間を平均 6 時間 → 45 分に短縮、報告書作成は 2 時間 → 10 分へ。',
-    publishedAt: '2024-03-08',
+    featuredImage: unsplashImage('1504917595217-d4dc5ebe6122', '製造業の生産ライン'),
+    publishedAt: '2025-08-12',
     content: [
       h3('プロジェクト背景'),
       p(
@@ -109,7 +120,8 @@ const allCases: Case[] = [
     techTags: ['Copilot / 生成AI', 'Azure', 'Security / Governance'],
     excerpt:
       'Private Endpoint + プロンプト監査 + データマスキングを組み合わせ、金融業コンプライアンス要件を満たす生成AI基盤を構築。営業店の照会対応時間を 20 分 → 5 分へ。',
-    publishedAt: '2024-03-12',
+    featuredImage: unsplashImage('1554224155-6726b3ff858f', '金融街の高層ビル'),
+    publishedAt: '2025-10-07',
     featured: true,
     content: [
       h3('プロジェクト背景'),
@@ -157,7 +169,8 @@ const allCases: Case[] = [
     techTags: ['Copilot / 生成AI', 'Azure', 'Microsoft 365'],
     excerpt:
       '求職者スキルとクライアント求人のマッチング作業を AI 検索で自動化。1 案件あたりのマッチング時間を 3 時間 → 30 分へ短縮し、紹介精度も 15% 向上。',
-    publishedAt: '2024-03-15',
+    featuredImage: unsplashImage('1521737604893-d14cc237f11d', 'ビジネスミーティング'),
+    publishedAt: '2025-11-18',
     content: [
       h3('プロジェクト背景'),
       p(
@@ -205,7 +218,8 @@ const allCases: Case[] = [
     techTags: ['Copilot / 生成AI', 'Microsoft 365', 'Azure'],
     excerpt:
       '院内ポータルに散在していた規程・手順書を SharePoint に集約し、Teams 上で Copilot Studio 製チャットボットが 24 時間応答。看護部長への問合せを 70% 削減。',
-    publishedAt: '2024-03-20',
+    featuredImage: unsplashImage('1576091160399-112ba8d25d1d', '病院の廊下'),
+    publishedAt: '2025-12-16',
     content: [
       h3('プロジェクト背景'),
       p(
@@ -250,7 +264,8 @@ const allCases: Case[] = [
     techTags: ['Power Platform', 'Microsoft 365', 'Dataverse / D365'],
     excerpt:
       '紙と Excel と メール添付が混在していた社内稟議を Power Apps + Dataverse へ統一。平均承認リードタイムを 8 営業日 → 2 営業日へ短縮。',
-    publishedAt: '2024-03-25',
+    featuredImage: unsplashImage('1497366216548-37526070297c', 'モダンオフィスで協働するチーム'),
+    publishedAt: '2026-01-13',
     featured: true,
     content: [
       h3('プロジェクト背景'),
@@ -298,7 +313,8 @@ const allCases: Case[] = [
     techTags: ['Copilot / 生成AI', 'Azure', 'Microsoft 365'],
     excerpt:
       '賃貸仲介の契約書チェックを Azure OpenAI で半自動化、店頭 FAQ は Copilot チャットボットで即応。繁忙期の残業時間を 40% 削減。',
-    publishedAt: '2024-04-02',
+    featuredImage: unsplashImage('1560518883-ce09059eeffa', '不動産の鍵とキーホルダー'),
+    publishedAt: '2026-02-24',
     content: [
       h3('プロジェクト背景'),
       p(
@@ -345,7 +361,8 @@ const allCases: Case[] = [
     techTags: ['Copilot / 生成AI', 'Microsoft 365', 'Security / Governance'],
     excerpt:
       '教務規程・補助金ガイドライン・過去稟議を SharePoint に統合し、Copilot for M365 で横断検索。教員から事務局への問合せを月 1,200 件 → 480 件へ削減。',
-    publishedAt: '2024-04-10',
+    featuredImage: unsplashImage('1541339907198-e08756dedf3f', '大学の講堂'),
+    publishedAt: '2026-04-15',
     content: [
       h3('プロジェクト背景'),
       p(

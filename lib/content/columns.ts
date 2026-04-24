@@ -11,7 +11,7 @@ const allColumns: Column[] = [
     techTags: ['Copilot / 生成AI', 'Microsoft 365', 'Security / Governance'],
     excerpt:
       '「結局 ChatGPT とどう違うのか?」という質問に、ライセンス / データ境界 / 統合範囲 / 運用コストの 4 観点で答えます。',
-    publishedAt: '2024-03-01',
+    publishedAt: '2025-07-28',
     content: [
       h3('なぜ比較が必要なのか'),
       p(
@@ -48,7 +48,7 @@ const allColumns: Column[] = [
     techTags: ['Power Platform'],
     excerpt:
       '「Per User」「Per App」「Premium」「Developer」—— 複雑な Power Apps ライセンスを、適用シーンごとに整理します。',
-    publishedAt: '2024-03-05',
+    publishedAt: '2025-09-10',
     content: [
       h3('Power Apps ライセンスが難しい理由'),
       p(
@@ -85,7 +85,7 @@ const allColumns: Column[] = [
     techTags: ['Copilot / 生成AI', 'Security / Governance'],
     excerpt:
       '導入プロジェクトの「よくある事故」を 5 パターンに分類。それぞれの典型症状と、事前に避けるための判断軸を解説。',
-    publishedAt: '2024-03-10',
+    publishedAt: '2025-11-04',
     content: [
       h3('なぜ生成 AI 導入は失敗しがちなのか'),
       p(
@@ -121,7 +121,7 @@ const allColumns: Column[] = [
     techTags: ['Dataverse / D365', 'Microsoft 365'],
     excerpt:
       'Salesforce・HubSpot ではなく Dynamics 365 を選ぶべき中堅企業の特徴と、その理由を 3 点に絞って整理。',
-    publishedAt: '2024-03-15',
+    publishedAt: '2025-12-02',
     content: [
       h3('前提:どの企業にも Dynamics 365 が最適というわけではない'),
       p(
@@ -158,7 +158,7 @@ const allColumns: Column[] = [
     techTags: ['Security / Governance', 'Microsoft 365'],
     excerpt:
       '「Purview って何ができるの?」にコンパクトに答えます。データ分類・DLP・機密ラベルの役割を整理し、最初の 30 日でやるべきことを提示。',
-    publishedAt: '2024-03-20',
+    publishedAt: '2026-01-20',
     content: [
       h3('Purview は 3 つの機能の総称'),
       p(
@@ -195,7 +195,7 @@ const allColumns: Column[] = [
     techTags: ['Power Platform', 'Dataverse / D365', 'Microsoft 365'],
     excerpt:
       '小規模アプリは SharePoint List、全社基盤は Dataverse —— しかし判断軸は本当にそれだけか。データ量・権限・ライセンス 3 観点で比較。',
-    publishedAt: '2024-03-25',
+    publishedAt: '2026-03-05',
     content: [
       h3('結論から'),
       p(

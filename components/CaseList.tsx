@@ -30,6 +30,7 @@ export default function CaseList({ cases }: CaseListProps) {
                   src={item.featuredImage.asset.url}
                   alt={item.featuredImage.alt || item.title}
                   fill
+                  sizes="(max-width: 768px) 100vw, 40vw"
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />
               ) : (
