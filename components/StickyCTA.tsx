@@ -17,13 +17,13 @@ export default function StickyCTA({ ctaConfig }: StickyCTAProps) {
         href={ctaConfig.secondaryCTA.link}
         className="group relative block overflow-hidden rounded-xl bg-gray-900 shadow-xl transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-primary-600/20"
       >
-        <div className="relative w-full">
+        <div className="relative w-full aspect-square overflow-hidden">
           <Image
             src="/images/ad-banner.png"
             alt="SkyFuture AI Lab Ad"
-            width={1024}
-            height={1024}
-            className="w-full h-auto transition-all duration-700 group-hover:scale-105 group-hover:brightness-110"
+            fill
+            sizes="(max-width: 1024px) 100vw, 320px"
+            className="object-cover transition-transform duration-700 group-hover:scale-105"
           />
           {/* Subtle overlay on hover */}
           <div className="absolute inset-0 bg-accent-500/0 transition-colors duration-300 group-hover:bg-accent-500/5"></div>

@@ -34,7 +34,7 @@ export default async function ServicesPage() {
       <div className="container mx-auto px-4 sm:px-6 py-10 md:py-20 max-w-7xl">
         <SectionHeader
           eyebrow="SERVICE LINEUP"
-          title="5 つの支援サービス"
+          title="6 つの支援サービス"
           description="お客様の DX フェーズに合わせて、導入〜定着化まで一貫してご支援します。"
           align="left"
         />

@@ -116,6 +116,35 @@ const allServices: Service[] = [
     ],
   },
   {
+    _id: 'svc-power-bi-data-platform',
+    title: 'Power BI / データ活用基盤構築',
+    slug: { current: 'power-bi-data-platform' },
+    techTags: ['Power Platform', 'Microsoft 365', 'Azure'],
+    excerpt:
+      'Excel・部門別ツールが乱立し「経営会議で数字が食い違う」企業向けに、Microsoft Fabric / Power BI を中核とした全社共通のデータ基盤と意思決定ダッシュボードを構築します。',
+    publishedAt: '2025-04-22',
+    content: [
+      h3('このサービスで解決できる課題'),
+      bullet('部門ごとに集計方法が異なり、経営会議で数字の食い違いが発生する'),
+      bullet('Excel ベースの月次レポート作成に毎月数十時間が浪費されている'),
+      bullet('過去にデータ基盤を構築したが、現場で活用されず形骸化している'),
+      h3('提供内容'),
+      p(
+        '「BI ツールの導入」ではなく「意思決定スピードの向上」を目的に、データソース統合 → セマンティックモデル設計 → Power BI ダッシュボード構築 → 現場活用定着までを一気通貫で支援します。Microsoft Fabric / Dataverse / SharePoint Lists / 既存 DWH を組み合わせ、コスト・拡張性・ガバナンスを両立する基盤を設計。"作って終わり" にならないよう、現場担当者がセルフでレポートを更新できる体制までを移管します。'
+      ),
+      bullet('既存データソースの棚卸 + 経営 KPI ツリー整理ワークショップ'),
+      bullet('Microsoft Fabric / Dataverse によるセマンティックモデル設計'),
+      bullet('経営層向け統合ダッシュボード 3〜5 本の構築'),
+      bullet('行レベルセキュリティ(RLS)と機密ラベルによるアクセス制御設計'),
+      bullet('現場担当者向け Power BI セルフサービス研修(初級 / 中級)'),
+      bullet('運用 3 ヶ月後のレビューと KPI 見直し伴走'),
+      h3('標準期間 / 体制'),
+      p('PoC 6 週間、本番構築 3〜5 ヶ月。BI コンサルタント 1 名 + データエンジニア 1〜2 名が専任アサイン。'),
+      h3('費用感'),
+      p('PoC 350 万円台から、本番構築はデータソース数・対象部門規模により 1,000〜2,500 万円。'),
+    ],
+  },
+  {
     _id: 'svc-security-assessment',
     title: 'セキュリティアセスメント',
     slug: { current: 'security-assessment' },

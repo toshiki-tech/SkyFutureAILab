@@ -68,13 +68,11 @@ export function ArticleLayout({
         </article>
 
         {sidebar && (
-          <aside className="lg:col-span-1">
+          <aside className="hidden lg:col-span-1 lg:block">
             <div className="lg:sticky lg:top-24">{sidebar}</div>
           </aside>
         )}
       </div>
-
-      <div className="lg:hidden h-24" aria-hidden="true" />
     </div>
   )
 }

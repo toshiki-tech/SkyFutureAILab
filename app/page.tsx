@@ -51,34 +51,7 @@ export default async function HomePage() {
     <div className="overflow-x-hidden">
       <Hero ctaConfig={ctaConfig} />
 
-      {/* 主要取引先 ロゴウォール */}
-      <Section bg="white" size="md">
-        <SectionHeader
-          eyebrow="PARTNERS"
-          title="主要取引先・協業パートナー"
-          description="Microsoft 公式パートナーとして、大手 SIer・コンサルティングファームと共に多くの DX プロジェクトを推進しています。"
-          align="center"
-        />
-        <ClientLogoWall />
-      </Section>
-
-      {/* 統計データ */}
-      <Section bg="gray" size="lg">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
-          {statsItems.map((item) => (
-            <div key={item.label} className="text-center">
-              <div className="text-4xl md:text-5xl font-bold text-primary-900 tracking-tight">
-                {item.value}
-              </div>
-              <div className="mt-2 text-sm md:text-base text-gray-600 font-medium">
-                {item.label}
-              </div>
-            </div>
-          ))}
-        </div>
-      </Section>
-
-      {/* サービス */}
+      {/* サービス（首屏直下：先回答「何ができる会社か」） */}
       {services?.length > 0 && (
         <Section bg="white" size="xl">
           <SectionHeader
@@ -97,9 +70,25 @@ export default async function HomePage() {
         </Section>
       )}
 
+      {/* 統計データ（軽い社会的証明） */}
+      <Section bg="gray" size="md">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+          {statsItems.map((item) => (
+            <div key={item.label} className="text-center">
+              <div className="text-4xl md:text-5xl font-bold text-primary-900 tracking-tight">
+                {item.value}
+              </div>
+              <div className="mt-2 text-sm md:text-base text-gray-600 font-medium">
+                {item.label}
+              </div>
+            </div>
+          ))}
+        </div>
+      </Section>
+
       {/* おすすめ事例 */}
       {featuredCases?.length > 0 && (
-        <Section bg="gray" size="xl">
+        <Section bg="white" size="xl">
           <SectionHeader
             eyebrow="CASES"
             title="導入事例"
@@ -118,7 +107,7 @@ export default async function HomePage() {
 
       {/* おすすめメソッド */}
       {featuredMethods?.length > 0 && (
-        <Section bg="white" size="xl">
+        <Section bg="gray" size="xl">
           <SectionHeader
             eyebrow="METHODS"
             title="メソッド"
@@ -135,22 +124,33 @@ export default async function HomePage() {
         </Section>
       )}
 
-      {/* パートナー / 技術スタック */}
-      <Section bg="gray" size="lg">
-        <SectionHeader
-          eyebrow="TECHNOLOGY"
-          title="活用する主要プラットフォーム"
-          align="center"
-        />
-        <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-6 md:gap-x-14">
-          {mockPartners.map((partner) => (
-            <div
-              key={partner}
-              className="text-gray-500 text-base md:text-lg font-semibold hover:text-primary-900 transition-colors"
-            >
-              {partner}
+      {/* 信頼 / エコシステム：取引先ロゴ（薄ストリップ）+ 活用プラットフォーム */}
+      <Section bg="white" size="lg">
+        <div className="space-y-12">
+          <div>
+            <p className="text-center text-xs font-semibold uppercase tracking-[0.25em] text-gray-500 mb-8">
+              主要取引先・協業パートナー
+            </p>
+            <ClientLogoWall variant="strip" columns="eight" />
+          </div>
+
+          <div className="mx-auto h-px w-24 bg-gray-200"></div>
+
+          <div>
+            <p className="text-center text-xs font-semibold uppercase tracking-[0.25em] text-gray-500 mb-6">
+              活用プラットフォーム
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4 md:gap-x-14">
+              {mockPartners.map((partner) => (
+                <div
+                  key={partner}
+                  className="text-gray-500 text-sm md:text-base font-semibold hover:text-primary-900 transition-colors"
+                >
+                  {partner}
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
       </Section>
 

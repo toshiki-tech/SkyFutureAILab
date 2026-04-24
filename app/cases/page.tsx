@@ -168,7 +168,7 @@ export default async function CasesPage({ searchParams }: CasesPageProps) {
             </div>
           </div>
 
-          <aside className="lg:col-span-1">
+          <aside className="hidden lg:col-span-1 lg:block">
             <div className="lg:sticky lg:top-6">
               <StickyCTA ctaConfig={ctaConfig} />
             </div>

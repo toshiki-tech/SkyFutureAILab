@@ -44,6 +44,13 @@ export default function ServiceGrid({ services }: ServiceGridProps) {
         </svg>
       )
     }
+    if (title.includes('Power BI') || title.includes('データ') || title.includes('分析')) {
+      return (
+        <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6a1 1 0 011-1h1a1 1 0 011 1v13M5 19v-7a1 1 0 011-1h1a1 1 0 011 1v7m5 0V9a1 1 0 011-1h1a1 1 0 011 1v10m4 0V4a1 1 0 011-1h1a1 1 0 011 1v15M3 21h18" />
+        </svg>
+      )
+    }
     if (title.includes('セキュリティ') || title.includes('ガバナンス')) {
       return (
         <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
