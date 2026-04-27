@@ -4,17 +4,23 @@ const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || ''
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production'
 const apiVersion = '2024-01-01'
 
-// 任意の空白トークンが渡るとサーバーが "Session not found" を返してしまうので
-// 値が完全に有効な場合のみ付ける。public dataset なら token なしで十分。
-const readToken = process.env.SANITY_API_READ_TOKEN?.trim()
-
+/**
+ * Public-read client for the marketing site.
+ *
+ * Intentionally does NOT include a token. The Sanity dataset is configured
+ * for public anonymous reads, so no Authorization header is needed. Sending
+ * an invalid/expired token would cause Sanity to return
+ * 401 "Session not found" — which is exactly what's been happening on
+ * Vercel when env vars contain a stale token.
+ *
+ * For writes, use sanity/lib/writeClient.ts (server-side, with token).
+ * For draft preview reads (logged-in editors), build a separate client
+ * that explicitly accepts a token at call site.
+ */
 export const client = createClient({
   projectId: projectId || 'dummy',
   dataset: dataset || 'production',
   apiVersion,
-  // CDN 端点(apicdn.sanity.io)が過去のデプロイで 401 をキャッシュして
-  // しまっていたので、直接 API 端点(api.sanity.io)を使う。force-dynamic
-  // と組み合わせるとレスポンスタイムは数十ms の差で実用上問題なし。
   useCdn: false,
-  ...(readToken ? { token: readToken } : {}),
+  // No token. Anonymous reads only.
 })
