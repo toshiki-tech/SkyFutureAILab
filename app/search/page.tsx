@@ -21,14 +21,14 @@ const EMPTY_RESULTS: SearchResults = { cases: [], methods: [], services: [], col
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const query = searchParams.q || ''
 
-  const [results, industries, featuredCases, featuredMethods] = await Promise.all([
+  const [results, industries, featuredCases, featuredMethods] = (await Promise.all([
     query
-      ? client.fetch<SearchResults>(searchQuery, { query })
+      ? client.fetch(searchQuery, { query } as any)
       : Promise.resolve(EMPTY_RESULTS),
-    client.fetch<IndustryCategory[]>(industryCategoriesQuery),
-    client.fetch<Case[]>(featuredCasesQuery),
-    client.fetch<Method[]>(featuredMethodsQuery),
-  ])
+    client.fetch(industryCategoriesQuery),
+    client.fetch(featuredCasesQuery),
+    client.fetch(featuredMethodsQuery),
+  ])) as [SearchResults, IndustryCategory[], Case[], Method[]]
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">

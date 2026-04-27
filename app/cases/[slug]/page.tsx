@@ -21,7 +21,7 @@ interface CasePageProps {
 export async function generateMetadata({
   params,
 }: CasePageProps): Promise<Metadata> {
-  const caseData = await client.fetch<Case | null>(caseBySlugQuery, { slug: params.slug })
+  const caseData = (await client.fetch(caseBySlugQuery, { slug: params.slug } as any)) as Case | null
 
   if (!caseData) {
     return { title: '事例が見つかりません | SkyFuture AI Lab' }
@@ -37,7 +37,7 @@ export default async function CasePage({ params }: CasePageProps) {
   const { slug } = params
 
   const [caseData, ctaConfig] = await Promise.all([
-    client.fetch<Case | null>(caseBySlugQuery, { slug }),
+    client.fetch(caseBySlugQuery, { slug } as any) as Promise<Case | null>,
     client.fetch(ctaConfigQuery),
   ])
 
@@ -49,7 +49,7 @@ export default async function CasePage({ params }: CasePageProps) {
     ? await client.fetch(relatedMethodsQuery, {
         excludeId: caseData._id,
         techTags: caseData.techTags,
-      })
+      } as any)
     : []
 
   return (

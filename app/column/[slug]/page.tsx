@@ -20,9 +20,9 @@ interface ColumnPageProps {
 export async function generateMetadata({
   params,
 }: ColumnPageProps): Promise<Metadata> {
-  const column = await client.fetch<Column | null>(columnBySlugQuery, {
+  const column = (await client.fetch(columnBySlugQuery, {
     slug: params.slug,
-  })
+  } as any)) as Column | null
 
   if (!column) {
     return { title: 'コラムが見つかりません | SkyFuture AI Lab' }
@@ -38,7 +38,7 @@ export default async function ColumnPage({ params }: ColumnPageProps) {
   const { slug } = params
 
   const [column, ctaConfig] = await Promise.all([
-    client.fetch<Column | null>(columnBySlugQuery, { slug }),
+    client.fetch(columnBySlugQuery, { slug } as any) as Promise<Column | null>,
     client.fetch(ctaConfigQuery),
   ])
 
@@ -46,11 +46,11 @@ export default async function ColumnPage({ params }: ColumnPageProps) {
     notFound()
   }
 
-  const relatedColumns = await client.fetch<Column[]>(relatedColumnsQuery, {
+  const relatedColumns = (await client.fetch(relatedColumnsQuery, {
     excludeId: column._id,
     techTags: column.techTags || [],
     category: column.category || null,
-  })
+  } as any)) as Column[]
 
   return (
     <ArticleLayout

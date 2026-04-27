@@ -14,10 +14,10 @@ export const metadata: Metadata = {
 export const revalidate = 60
 
 export default async function ColumnPage() {
-  const columns = await client.fetch<Column[]>(columnsQuery, {
+  const columns = (await client.fetch(columnsQuery, {
     category: null,
     techTag: null,
-  })
+  } as any)) as Column[]
 
   return (
     <div className="bg-white">

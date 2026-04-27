@@ -36,7 +36,7 @@ export default async function CasesPage({ searchParams }: CasesPageProps) {
   const industry = searchParams.industry
 
   const [cases, industries, ctaConfig] = (await Promise.all([
-    client.fetch(casesQuery, { problem: problem || null, industry: industry || null }),
+    client.fetch(casesQuery, { problem: problem || null, industry: industry || null } as any),
     client.fetch(industryCategoriesQuery),
     client.fetch(ctaConfigQuery),
   ])) as [Case[], IndustryCategory[], any]

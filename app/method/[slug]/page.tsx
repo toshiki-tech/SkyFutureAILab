@@ -21,9 +21,9 @@ interface MethodPageProps {
 export async function generateMetadata({
   params,
 }: MethodPageProps): Promise<Metadata> {
-  const methodData = await client.fetch<Method | null>(methodBySlugQuery, {
+  const methodData = (await client.fetch(methodBySlugQuery, {
     slug: params.slug,
-  })
+  } as any)) as Method | null
 
   if (!methodData) {
     return { title: 'メソッドが見つかりません | SkyFuture AI Lab' }
@@ -39,7 +39,7 @@ export default async function MethodPage({ params }: MethodPageProps) {
   const { slug } = params
 
   const [methodData, ctaConfig] = await Promise.all([
-    client.fetch<Method | null>(methodBySlugQuery, { slug }),
+    client.fetch(methodBySlugQuery, { slug } as any) as Promise<Method | null>,
     client.fetch(ctaConfigQuery),
   ])
 
@@ -51,7 +51,7 @@ export default async function MethodPage({ params }: MethodPageProps) {
     ? await client.fetch(relatedCasesQuery, {
         excludeId: methodData._id,
         techTags: methodData.techTags,
-      })
+      } as any)
     : []
 
   return (

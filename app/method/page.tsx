@@ -32,7 +32,7 @@ export default async function MethodsPage({ searchParams }: MethodsPageProps) {
 
   const methods = (await client.fetch(methodsQuery, {
     techTag: techTag || null,
-  })) as Method[]
+  } as any)) as Method[]
 
   return (
     <div className="bg-white">

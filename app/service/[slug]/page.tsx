@@ -16,9 +16,9 @@ interface ServicePageProps {
 export async function generateMetadata({
   params,
 }: ServicePageProps): Promise<Metadata> {
-  const service = await client.fetch<Service | null>(serviceBySlugQuery, {
+  const service = (await client.fetch(serviceBySlugQuery, {
     slug: params.slug,
-  })
+  } as any)) as Service | null
 
   if (!service) {
     return { title: 'サービスが見つかりません | SkyFuture AI Lab' }
@@ -34,7 +34,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
   const { slug } = params
 
   const [service, ctaConfig] = await Promise.all([
-    client.fetch<Service | null>(serviceBySlugQuery, { slug }),
+    client.fetch(serviceBySlugQuery, { slug } as any) as Promise<Service | null>,
     client.fetch(ctaConfigQuery),
   ])
 

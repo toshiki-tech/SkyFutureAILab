@@ -86,6 +86,7 @@ export interface Column {
   techTags?: TechTag[]
   publishedAt: string
   updatedAt?: string
+  featured?: boolean
   seo?: SeoFields
 }
 
