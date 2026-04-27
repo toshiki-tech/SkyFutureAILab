@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: 'Microsoft 365・Power Platform・Dynamics 365・生成AI を活用したDX支援サービスの一覧です。',
 }
 
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
 
 export default async function ServicesPage() {
   const services = (await client.fetch(servicesQuery)) as Service[]

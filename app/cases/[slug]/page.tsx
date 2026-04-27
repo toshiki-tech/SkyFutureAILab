@@ -12,7 +12,7 @@ import RelatedMethods from '@/components/RelatedMethods'
 import PortableTextRenderer from '@/components/PortableTextRenderer'
 import { ArticleLayout, CTABlock } from '@/components/ui'
 
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
 
 interface CasePageProps {
   params: { slug: string }

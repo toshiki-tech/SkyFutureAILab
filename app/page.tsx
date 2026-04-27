@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     'Sky Future のMicrosoft 365・Power Platform・Dynamics 365・生成AI を活用したDX支援に関する事例とメソッドを紹介します。',
 }
 
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
   const [ctaConfig, featuredCases, featuredMethods, services] = await Promise.all([

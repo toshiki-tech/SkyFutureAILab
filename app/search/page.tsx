@@ -10,7 +10,7 @@ import {
 } from '@/lib/sanity/queries'
 import type { Case, Method, IndustryCategory } from '@/types'
 
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
 
 interface SearchPageProps {
   searchParams: { q?: string; industry?: string; tech?: string }

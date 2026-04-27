@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: 'Microsoft 365・Power Platform・Dynamics 365・生成AI を活用したDX支援の技術メソッドをご紹介します。',
 }
 
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
 
 const TECH_TAGS: TechTag[] = [
   'Microsoft 365',

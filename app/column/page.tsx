@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: 'Microsoft 365・Power Platform・生成AI の最新トレンドや活用ノウハウをお届けする、SkyFuture AI Lab の専門コラムです。',
 }
 
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
 
 export default async function ColumnPage() {
   const columns = (await client.fetch(columnsQuery, {

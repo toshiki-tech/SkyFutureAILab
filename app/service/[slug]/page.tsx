@@ -7,7 +7,7 @@ import StickyCTA from '@/components/StickyCTA'
 import PortableTextRenderer from '@/components/PortableTextRenderer'
 import { ArticleLayout, CTABlock } from '@/components/ui'
 
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
 
 interface ServicePageProps {
   params: { slug: string }
