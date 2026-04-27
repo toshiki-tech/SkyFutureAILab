@@ -19,10 +19,11 @@
   }
 }
 
-/* 平滑滚动 */
+/* 平滑滚動。横方向のはみ出しは body 側で吸収する(html に overflow-x:hidden を
+   付けるとモバイル Safari / Chrome でスクロール root が body に切り替わり、
+   フッターが見切れる/到達できない不具合が発生するため) */
 html {
   scroll-behavior: smooth;
-  overflow-x: hidden;
 }
 
 body {

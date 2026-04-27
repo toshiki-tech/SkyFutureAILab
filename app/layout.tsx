@@ -22,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="ja" className={`${notoSansJp.variable} overflow-x-hidden`}>
+    <html lang="ja" className={notoSansJp.variable}>
       <body className="min-h-screen bg-white text-gray-900 overflow-x-hidden font-sans">
         <ConditionalChrome>{children}</ConditionalChrome>
       </body>
