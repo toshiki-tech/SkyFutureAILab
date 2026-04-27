@@ -1,5 +1,27 @@
 import { groq } from 'next-sanity'
 
+// 本文内 linkCard を参照解決するための共通プロジェクション。
+// content フィールドを使う詳細クエリは `${contentProjection}` で展開する。
+const contentProjection = `
+  content[]{
+    ...,
+    _type == "linkCard" => {
+      ...,
+      "reference": reference->{
+        _id,
+        _type,
+        title,
+        slug,
+        excerpt,
+        featuredImage {
+          asset-> { _id, url },
+          alt
+        }
+      }
+    }
+  }
+`
+
 export const ctaConfigQuery = groq`
   *[_type == "ctaConfig"][0] {
     primaryCTA,
@@ -62,7 +84,7 @@ export const caseBySlugQuery = groq`
     },
     techTags,
     excerpt,
-    content,
+    ${contentProjection},
     featuredImage {
       asset-> { _id, url },
       alt
@@ -130,7 +152,7 @@ export const methodBySlugQuery = groq`
     slug,
     techTags,
     excerpt,
-    content,
+    ${contentProjection},
     featuredImage {
       asset-> { _id, url },
       alt
@@ -230,7 +252,7 @@ export const serviceBySlugQuery = groq`
     title,
     slug,
     excerpt,
-    content,
+    ${contentProjection},
     featuredImage {
       asset-> { _id, url },
       alt
@@ -246,7 +268,99 @@ export const serviceBySlugQuery = groq`
   }
 `
 
-// 搜索查询 - 支持全文搜索
+// コラム
+export const columnsQuery = groq`
+  *[
+    _type == "column"
+    && (!defined($category) || category == $category)
+    && (!defined($techTag) || $techTag in techTags)
+  ] | order(publishedAt desc) {
+    _id,
+    title,
+    slug,
+    category,
+    author,
+    techTags,
+    excerpt,
+    featuredImage {
+      asset-> { _id, url },
+      alt
+    },
+    publishedAt,
+    updatedAt,
+    featured,
+    "seo": {
+      "title": coalesce(seo.title, title),
+      "description": coalesce(seo.description, excerpt),
+      "ogImage": coalesce(seo.ogImage, featuredImage).asset->url
+    }
+  }
+`
+
+export const columnBySlugQuery = groq`
+  *[_type == "column" && slug.current == $slug][0] {
+    _id,
+    title,
+    slug,
+    category,
+    author,
+    techTags,
+    excerpt,
+    ${contentProjection},
+    featuredImage {
+      asset-> { _id, url },
+      alt
+    },
+    publishedAt,
+    updatedAt,
+    "seo": {
+      "title": coalesce(seo.title, title),
+      "description": coalesce(seo.description, excerpt),
+      "ogImage": coalesce(seo.ogImage, featuredImage).asset->url
+    }
+  }
+`
+
+export const featuredColumnsQuery = groq`
+  *[_type == "column" && featured == true] | order(publishedAt desc) [0...3] {
+    _id,
+    title,
+    slug,
+    category,
+    techTags,
+    excerpt,
+    featuredImage {
+      asset-> { _id, url },
+      alt
+    },
+    publishedAt
+  }
+`
+
+export const relatedColumnsQuery = groq`
+  *[
+    _type == "column"
+    && _id != $excludeId
+    && (
+      count(techTags[@ in $techTags]) > 0
+      || category == $category
+    )
+  ] | order(publishedAt desc) [0...3] {
+    _id,
+    title,
+    slug,
+    category,
+    techTags,
+    excerpt,
+    featuredImage {
+      asset-> { _id, url },
+      alt
+    },
+    publishedAt
+  }
+`
+
+// 検索クエリ - 全文検索対応
 export const searchQuery = groq`
   {
     "cases": *[_type == "case" && (
@@ -304,6 +418,26 @@ export const searchQuery = groq`
       slug,
       excerpt,
       techTags,
+      featuredImage {
+        asset-> { _id, url },
+        alt
+      },
+      publishedAt
+    },
+    "columns": *[_type == "column" && (
+      title match $query + "*" ||
+      excerpt match $query + "*" ||
+      pt::text(content) match $query + "*" ||
+      category match $query + "*" ||
+      $query in techTags
+    )] | order(publishedAt desc) {
+      _id,
+      _type,
+      title,
+      slug,
+      category,
+      techTags,
+      excerpt,
       featuredImage {
         asset-> { _id, url },
         alt

@@ -10,9 +10,19 @@ const techTagOptions = [
   { title: 'Integration（API連携など）', value: 'Integration（API連携など）' },
 ]
 
+const categoryOptions = [
+  { title: '生成AI活用', value: '生成AI活用' },
+  { title: 'Power Platform', value: 'Power Platform' },
+  { title: 'Microsoft 365', value: 'Microsoft 365' },
+  { title: 'Dynamics 365', value: 'Dynamics 365' },
+  { title: 'セキュリティ', value: 'セキュリティ' },
+  { title: 'DX 戦略', value: 'DX 戦略' },
+  { title: '導入事例の裏側', value: '導入事例の裏側' },
+]
+
 export default defineType({
-  name: 'service',
-  title: 'サービス',
+  name: 'column',
+  title: 'コラム',
   type: 'document',
   fields: [
     defineField({
@@ -30,6 +40,30 @@ export default defineType({
         maxLength: 96,
       },
       validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'category',
+      title: 'カテゴリ',
+      type: 'string',
+      options: {
+        list: categoryOptions,
+      },
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'author',
+      title: '著者',
+      type: 'string',
+      initialValue: 'SkyFuture 編集部',
+    }),
+    defineField({
+      name: 'techTags',
+      title: '技術タグ',
+      type: 'array',
+      of: [{ type: 'string' }],
+      options: {
+        list: techTagOptions,
+      },
     }),
     defineField({
       name: 'excerpt',
@@ -73,15 +107,6 @@ export default defineType({
       ],
     }),
     defineField({
-      name: 'techTags',
-      title: '技術タグ',
-      type: 'array',
-      of: [{ type: 'string' }],
-      options: {
-        list: techTagOptions,
-      },
-    }),
-    defineField({
       name: 'publishedAt',
       title: '公開日',
       type: 'datetime',
@@ -91,6 +116,13 @@ export default defineType({
       name: 'updatedAt',
       title: '更新日',
       type: 'datetime',
+    }),
+    defineField({
+      name: 'featured',
+      title: 'おすすめコラム',
+      type: 'boolean',
+      description: 'ホームページに表示するかどうか',
+      initialValue: false,
     }),
     defineField({
       name: 'seo',
@@ -122,11 +154,13 @@ export default defineType({
   preview: {
     select: {
       title: 'title',
+      category: 'category',
       media: 'featuredImage',
     },
-    prepare({ title, media }) {
+    prepare({ title, category, media }) {
       return {
         title,
+        subtitle: category,
         media,
       }
     },

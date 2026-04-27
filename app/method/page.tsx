@@ -5,12 +5,13 @@ import { Chip } from '@/components/ui'
 import type { TechTag, Method } from '@/types'
 import { client } from '@/sanity/lib/client'
 import { methodsQuery } from '@/lib/sanity/queries'
-import { mockAllMethods } from '@/lib/content'
 
 export const metadata: Metadata = {
   title: 'メソッド | SkyFuture AI Lab',
   description: 'Microsoft 365・Power Platform・Dynamics 365・生成AI を活用したDX支援の技術メソッドをご紹介します。',
 }
+
+export const revalidate = 60
 
 const TECH_TAGS: TechTag[] = [
   'Microsoft 365',
@@ -29,14 +30,9 @@ interface MethodsPageProps {
 export default async function MethodsPage({ searchParams }: MethodsPageProps) {
   const techTag = searchParams.techTag as TechTag | undefined
 
-  const sanityMethods = await client.fetch(methodsQuery, { techTag: techTag || null }).catch(() => [])
-  let methods = (sanityMethods && sanityMethods.length > 0) ? sanityMethods as unknown as Method[] : mockAllMethods as unknown as Method[]
-
-  if (!sanityMethods || sanityMethods.length === 0) {
-    if (techTag) {
-      methods = methods.filter((m) => m.techTags?.includes(techTag))
-    }
-  }
+  const methods = (await client.fetch(methodsQuery, {
+    techTag: techTag || null,
+  })) as Method[]
 
   return (
     <div className="bg-white">

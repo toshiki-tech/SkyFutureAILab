@@ -1,10 +1,17 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { mockColumnDetails, mockCtaConfig, mockAllColumns } from '@/lib/content'
 import type { Column } from '@/types'
+import { client } from '@/sanity/lib/client'
+import {
+  columnBySlugQuery,
+  relatedColumnsQuery,
+  ctaConfigQuery,
+} from '@/lib/sanity/queries'
 import StickyCTA from '@/components/StickyCTA'
 import PortableTextRenderer from '@/components/PortableTextRenderer'
 import { ArticleLayout, CTABlock, Card } from '@/components/ui'
+
+export const revalidate = 60
 
 interface ColumnPageProps {
   params: { slug: string }
@@ -13,7 +20,9 @@ interface ColumnPageProps {
 export async function generateMetadata({
   params,
 }: ColumnPageProps): Promise<Metadata> {
-  const column = mockColumnDetails[params.slug]
+  const column = await client.fetch<Column | null>(columnBySlugQuery, {
+    slug: params.slug,
+  })
 
   if (!column) {
     return { title: 'コラムが見つかりません | SkyFuture AI Lab' }
@@ -25,20 +34,23 @@ export async function generateMetadata({
   }
 }
 
-export default function ColumnPage({ params }: ColumnPageProps) {
-  const column = mockColumnDetails[params.slug] as Column | undefined
+export default async function ColumnPage({ params }: ColumnPageProps) {
+  const { slug } = params
+
+  const [column, ctaConfig] = await Promise.all([
+    client.fetch<Column | null>(columnBySlugQuery, { slug }),
+    client.fetch(ctaConfigQuery),
+  ])
 
   if (!column) {
     notFound()
   }
 
-  const relatedColumns = (mockAllColumns as Column[])
-    .filter((c) => c.slug.current !== column.slug.current)
-    .filter((c) =>
-      c.techTags?.some((tag) => column.techTags?.includes(tag)) ||
-      (c.category && c.category === column.category)
-    )
-    .slice(0, 3)
+  const relatedColumns = await client.fetch<Column[]>(relatedColumnsQuery, {
+    excludeId: column._id,
+    techTags: column.techTags || [],
+    category: column.category || null,
+  })
 
   return (
     <ArticleLayout
@@ -49,6 +61,7 @@ export default function ColumnPage({ params }: ColumnPageProps) {
       ]}
       title={column.title}
       excerpt={column.excerpt}
+      featuredImage={column.featuredImage}
       meta={{
         publishedAt: column.publishedAt,
         updatedAt: column.updatedAt,
@@ -101,7 +114,7 @@ export default function ColumnPage({ params }: ColumnPageProps) {
           )}
         </>
       }
-      sidebar={<StickyCTA ctaConfig={mockCtaConfig} />}
+      sidebar={<StickyCTA ctaConfig={ctaConfig} />}
     >
       {column.content && <PortableTextRenderer value={column.content} />}
     </ArticleLayout>

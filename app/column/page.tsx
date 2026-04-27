@@ -3,15 +3,21 @@ import SectionHero from '@/components/SectionHero'
 import ColumnList from '@/components/ColumnList'
 import { SectionHeader, CTABlock } from '@/components/ui'
 import type { Column } from '@/types'
-import { mockAllColumns } from '@/lib/content'
+import { client } from '@/sanity/lib/client'
+import { columnsQuery } from '@/lib/sanity/queries'
 
 export const metadata: Metadata = {
   title: 'コラム | SkyFuture AI Lab',
   description: 'Microsoft 365・Power Platform・生成AI の最新トレンドや活用ノウハウをお届けする、SkyFuture AI Lab の専門コラムです。',
 }
 
-export default function ColumnPage() {
-  const columns = mockAllColumns as unknown as Column[]
+export const revalidate = 60
+
+export default async function ColumnPage() {
+  const columns = await client.fetch<Column[]>(columnsQuery, {
+    category: null,
+    techTag: null,
+  })
 
   return (
     <div className="bg-white">

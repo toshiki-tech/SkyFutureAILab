@@ -4,7 +4,6 @@ import ServiceGrid from '@/components/ServiceGrid'
 import { SectionHeader, CTABlock } from '@/components/ui'
 import { client } from '@/sanity/lib/client'
 import { servicesQuery } from '@/lib/sanity/queries'
-import { mockServices } from '@/lib/content'
 import type { Service } from '@/types'
 
 export const metadata: Metadata = {
@@ -12,12 +11,10 @@ export const metadata: Metadata = {
   description: 'Microsoft 365・Power Platform・Dynamics 365・生成AI を活用したDX支援サービスの一覧です。',
 }
 
+export const revalidate = 60
+
 export default async function ServicesPage() {
-  const sanityServices = await client.fetch(servicesQuery).catch(() => [])
-  const services =
-    sanityServices && sanityServices.length > 0
-      ? (sanityServices as unknown as Service[])
-      : (mockServices as unknown as Service[])
+  const services = (await client.fetch(servicesQuery)) as Service[]
 
   return (
     <div className="bg-white">

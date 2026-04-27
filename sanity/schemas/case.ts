@@ -88,6 +88,10 @@ export default defineType({
             },
           ],
         },
+        { type: 'callout' },
+        { type: 'linkCard' },
+        { type: 'metric' },
+        { type: 'codeBlock' },
       ],
     }),
     defineField({

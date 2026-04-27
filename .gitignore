@@ -35,3 +35,7 @@ next-env.d.ts
 
 # sanity
 .sanity
+migration-dryrun.json
+
+# Claude Code working dir
+.claude/

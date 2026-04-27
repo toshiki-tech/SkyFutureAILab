@@ -1,11 +1,14 @@
 import type { ReactNode } from 'react'
+import Image from 'next/image'
 import { Breadcrumb, type BreadcrumbItem } from './Breadcrumb'
 import { ArticleMeta } from './ArticleMeta'
+import type { SanityImage } from '@/types/sanity'
 
 type ArticleLayoutProps = {
   breadcrumbs: BreadcrumbItem[]
   title: string
   excerpt?: string
+  featuredImage?: SanityImage
   meta?: {
     publishedAt?: string
     updatedAt?: string
@@ -22,6 +25,7 @@ export function ArticleLayout({
   breadcrumbs,
   title,
   excerpt,
+  featuredImage,
   meta,
   children,
   footer,
@@ -38,6 +42,19 @@ export function ArticleLayout({
   return (
     <div className="container mx-auto px-4 sm:px-6 py-10 md:py-16 max-w-7xl">
       <Breadcrumb items={breadcrumbs} className="mb-8" />
+
+      {featuredImage?.asset?.url && (
+        <div className="relative mb-10 md:mb-12 aspect-[16/9] w-full overflow-hidden rounded-2xl bg-gray-100">
+          <Image
+            src={featuredImage.asset.url}
+            alt={featuredImage.alt || title}
+            fill
+            sizes="(max-width: 1024px) 100vw, 75vw"
+            className="object-cover"
+            priority
+          />
+        </div>
+      )}
 
       <div className="grid gap-10 lg:grid-cols-4 lg:gap-12">
         <article className="lg:col-span-3">

@@ -1,16 +1,21 @@
-'use client'
-
 import Link from 'next/link'
 import Image from 'next/image'
 
 interface SearchCardProps {
     title: string
     slug: string
-    type: 'case' | 'method' | 'service'
+    type: 'case' | 'method' | 'service' | 'column'
     category?: string
     excerpt?: string
     image?: string
     techTags?: string[]
+}
+
+const typeToHrefBase: Record<SearchCardProps['type'], string> = {
+    case: '/cases',
+    method: '/method',
+    service: '/service',
+    column: '/column',
 }
 
 export default function SearchCard({
@@ -19,33 +24,41 @@ export default function SearchCard({
     type,
     category,
     excerpt,
-    image = '/images/cases-hero.png', // Fallback image
+    image,
     techTags,
 }: SearchCardProps) {
-    const href = type === 'case' ? `/cases/${slug}` : type === 'method' ? `/method/${slug}` : `/service/${slug}`
+    const href = `${typeToHrefBase[type]}/${slug}`
 
     return (
         <Link href={href} className="group flex flex-col h-full bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden hover:-translate-y-1">
-            {/* Visual Area */}
-            <div className="relative aspect-[16/9] w-full overflow-hidden bg-gray-100">
-                <Image
-                    src={image}
-                    alt={title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-                {category && (
-                    <div className="absolute top-4 left-4">
-                        <span className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white bg-accent-500/90 backdrop-blur-sm rounded-full shadow-sm">
+            {image && (
+                <div className="relative aspect-[16/9] w-full overflow-hidden bg-gray-100">
+                    <Image
+                        src={image}
+                        alt={title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    {category && (
+                        <div className="absolute top-4 left-4">
+                            <span className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white bg-accent-500/90 backdrop-blur-sm rounded-full shadow-sm">
+                                {category}
+                            </span>
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {/* Content Area */}
+            <div className="flex flex-col flex-grow p-6">
+                {!image && category && (
+                    <div className="mb-3">
+                        <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-accent-700 bg-accent-50 rounded-md">
                             {category}
                         </span>
                     </div>
                 )}
-            </div>
-
-            {/* Content Area */}
-            <div className="flex flex-col flex-grow p-6">
                 <div className="mb-4 flex flex-wrap gap-2">
                     {techTags?.slice(0, 2).map((tag) => (
                         <span key={tag} className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">

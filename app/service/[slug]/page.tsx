@@ -2,11 +2,12 @@ import type { Metadata } from 'next'
 import { client } from '@/sanity/lib/client'
 import { serviceBySlugQuery, ctaConfigQuery } from '@/lib/sanity/queries'
 import { notFound } from 'next/navigation'
-import { mockServiceDetails, mockCtaConfig } from '@/lib/content'
 import type { Service } from '@/types'
 import StickyCTA from '@/components/StickyCTA'
 import PortableTextRenderer from '@/components/PortableTextRenderer'
 import { ArticleLayout, CTABlock } from '@/components/ui'
+
+export const revalidate = 60
 
 interface ServicePageProps {
   params: { slug: string }
@@ -15,9 +16,9 @@ interface ServicePageProps {
 export async function generateMetadata({
   params,
 }: ServicePageProps): Promise<Metadata> {
-  const service =
-    (await client.fetch(serviceBySlugQuery, { slug: params.slug }).catch(() => null)) ||
-    mockServiceDetails[params.slug]
+  const service = await client.fetch<Service | null>(serviceBySlugQuery, {
+    slug: params.slug,
+  })
 
   if (!service) {
     return { title: 'サービスが見つかりません | SkyFuture AI Lab' }
@@ -32,13 +33,10 @@ export async function generateMetadata({
 export default async function ServicePage({ params }: ServicePageProps) {
   const { slug } = params
 
-  const [sanityService, sanityCtaConfig] = await Promise.all([
-    client.fetch(serviceBySlugQuery, { slug }).catch(() => null),
-    client.fetch(ctaConfigQuery).catch(() => null),
+  const [service, ctaConfig] = await Promise.all([
+    client.fetch<Service | null>(serviceBySlugQuery, { slug }),
+    client.fetch(ctaConfigQuery),
   ])
-
-  const service = (sanityService || mockServiceDetails[slug]) as unknown as Service
-  const ctaConfig = sanityCtaConfig || mockCtaConfig
 
   if (!service) {
     notFound()
@@ -53,6 +51,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
       ]}
       title={service.title}
       excerpt={service.excerpt}
+      featuredImage={service.featuredImage}
       meta={{
         publishedAt: service.publishedAt,
         updatedAt: service.updatedAt,

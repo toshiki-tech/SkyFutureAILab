@@ -6,16 +6,13 @@ import {
   ctaConfigQuery,
 } from '@/lib/sanity/queries'
 import { notFound } from 'next/navigation'
-import {
-  mockMethodDetails,
-  mockCtaConfig,
-  mockFeaturedCases,
-} from '@/lib/content'
 import type { Method } from '@/types'
 import StickyCTA from '@/components/StickyCTA'
 import RelatedCases from '@/components/RelatedCases'
 import PortableTextRenderer from '@/components/PortableTextRenderer'
 import { ArticleLayout, CTABlock } from '@/components/ui'
+
+export const revalidate = 60
 
 interface MethodPageProps {
   params: { slug: string }
@@ -24,9 +21,9 @@ interface MethodPageProps {
 export async function generateMetadata({
   params,
 }: MethodPageProps): Promise<Metadata> {
-  const methodData =
-    (await client.fetch(methodBySlugQuery, { slug: params.slug }).catch(() => null)) ||
-    mockMethodDetails[params.slug]
+  const methodData = await client.fetch<Method | null>(methodBySlugQuery, {
+    slug: params.slug,
+  })
 
   if (!methodData) {
     return { title: 'メソッドが見つかりません | SkyFuture AI Lab' }
@@ -41,34 +38,21 @@ export async function generateMetadata({
 export default async function MethodPage({ params }: MethodPageProps) {
   const { slug } = params
 
-  const [sanityMethod, sanityCtaConfig] = await Promise.all([
-    client.fetch(methodBySlugQuery, { slug }).catch(() => null),
-    client.fetch(ctaConfigQuery).catch(() => null),
+  const [methodData, ctaConfig] = await Promise.all([
+    client.fetch<Method | null>(methodBySlugQuery, { slug }),
+    client.fetch(ctaConfigQuery),
   ])
-
-  const methodData = (sanityMethod || mockMethodDetails[slug]) as unknown as Method
-  const ctaConfig = sanityCtaConfig || mockCtaConfig
 
   if (!methodData) {
     notFound()
   }
 
-  let relatedCases = []
-  if (sanityMethod && sanityMethod.techTags?.length > 0) {
-    relatedCases = await client
-      .fetch(relatedCasesQuery, {
-        excludeId: sanityMethod._id,
-        techTags: sanityMethod.techTags,
+  const relatedCases = methodData.techTags?.length
+    ? await client.fetch(relatedCasesQuery, {
+        excludeId: methodData._id,
+        techTags: methodData.techTags,
       })
-      .catch(() => [])
-  }
-  if (relatedCases.length === 0) {
-    relatedCases = mockFeaturedCases
-      .filter((caseItem) =>
-        caseItem.techTags?.some((tag) => (methodData.techTags as string[])?.includes(tag))
-      )
-      .slice(0, 3)
-  }
+    : []
 
   return (
     <ArticleLayout
@@ -79,6 +63,7 @@ export default async function MethodPage({ params }: MethodPageProps) {
       ]}
       title={methodData.title}
       excerpt={methodData.excerpt}
+      featuredImage={methodData.featuredImage}
       meta={{
         publishedAt: methodData.publishedAt,
         updatedAt: methodData.updatedAt,

@@ -70,6 +70,8 @@ export default function ContactPage() {
   const [step, setStep] = useState<Step>(1)
   const [data, setData] = useState<FormState>(INITIAL)
   const [errors, setErrors] = useState<Errors>({})
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
   const update = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     setData((prev) => ({ ...prev, [key]: value }))
@@ -98,9 +100,9 @@ export default function ContactPage() {
     setStep((step - 1) as Step)
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (step !== 3) return
+    if (step !== 3 || submitting) return
     const allErrors: Errors = {
       ...validateStep(1, data),
       ...validateStep(2, data),
@@ -110,15 +112,37 @@ export default function ContactPage() {
       setErrors(allErrors)
       return
     }
-    if (data.website) {
-      // Honeypot triggered — silently drop
-      return
+
+    setSubmitError(null)
+    setSubmitting(true)
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: data.type,
+          company: data.company,
+          department: data.department,
+          lastName: data.lastName,
+          firstName: data.firstName,
+          email: data.email,
+          phone: data.phone,
+          content: data.content,
+          privacy: data.privacy,
+          website: data.website,
+        }),
+      })
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}))
+        setSubmitError(body?.error || '送信に失敗しました。しばらくしてから再度お試しください。')
+        return
+      }
+      setStep(4)
+    } catch (err) {
+      setSubmitError('ネットワークエラーが発生しました。接続を確認のうえ、再度お試しください。')
+    } finally {
+      setSubmitting(false)
     }
-    console.log('[contact] submit', {
-      ...data,
-      website: undefined,
-    })
-    setStep(4)
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
@@ -389,20 +413,30 @@ export default function ContactPage() {
                         error={errors.privacy}
                       />
 
+                      {submitError && (
+                        <div
+                          role="alert"
+                          className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+                        >
+                          {submitError}
+                        </div>
+                      )}
+
                       <div className="flex gap-4">
                         <button
                           type="button"
                           onClick={goPrev}
-                          className="flex-1 rounded-2xl border-2 border-gray-200 py-4 font-bold text-gray-500 hover:bg-gray-50 transition-all"
+                          disabled={submitting}
+                          className="flex-1 rounded-2xl border-2 border-gray-200 py-4 font-bold text-gray-500 hover:bg-gray-50 transition-all disabled:cursor-not-allowed disabled:opacity-50"
                         >
                           戻る
                         </button>
                         <button
                           type="submit"
-                          disabled={!data.privacy}
+                          disabled={!data.privacy || submitting}
                           className="flex-[2] rounded-2xl bg-accent-600 py-4 text-lg font-bold text-white shadow-xl transition-all hover:bg-accent-700 hover:scale-[1.02] active:scale-95 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500 disabled:hover:scale-100 disabled:shadow-none"
                         >
-                          同意して送信する
+                          {submitting ? '送信中...' : '同意して送信する'}
                         </button>
                       </div>
                     </div>

@@ -9,13 +9,14 @@ import {
   industryCategoriesQuery,
   ctaConfigQuery,
 } from '@/lib/sanity/queries'
-import { mockAllCases, mockIndustryCategories, mockCtaConfig } from '@/lib/content'
 import { Chip } from '@/components/ui'
 
 export const metadata: Metadata = {
   title: '事例 | SkyFuture AI Lab',
   description: 'Microsoft 365・Power Platform・Dynamics 365・生成AI を活用したDX支援の導入事例をご紹介します。',
 }
+
+export const revalidate = 60
 
 const CASE_PROBLEMS: CaseProblem[] = [
   '業務効率化',
@@ -34,27 +35,11 @@ export default async function CasesPage({ searchParams }: CasesPageProps) {
   const problem = searchParams.problem
   const industry = searchParams.industry
 
-  // Sanityからデータを取得
-  const [sanityCases, sanityIndustries, sanityCtaConfig] = await Promise.all([
-    client.fetch(casesQuery, { problem: problem || null, industry: industry || null }).catch(() => []),
-    client.fetch(industryCategoriesQuery).catch(() => []),
-    client.fetch(ctaConfigQuery).catch(() => null),
-  ])
-
-  // Sanityデータがある場合はそちらを利用し、ない場合はモックデータを使用する
-  let cases = (sanityCases && sanityCases.length > 0) ? sanityCases as unknown as Case[] : mockAllCases as unknown as Case[]
-  const industries = (sanityIndustries && sanityIndustries.length > 0) ? sanityIndustries as IndustryCategory[] : mockIndustryCategories as IndustryCategory[]
-  const ctaConfig = sanityCtaConfig || mockCtaConfig
-
-  // モックデータを使用する場合のみ、クライアントサイドでのフィルタリング（簡易版）を適用
-  if (!sanityCases || sanityCases.length === 0) {
-    if (problem) {
-      cases = cases.filter((c) => c.problem === problem)
-    }
-    if (industry) {
-      cases = cases.filter((c) => c.industry?.value === industry)
-    }
-  }
+  const [cases, industries, ctaConfig] = (await Promise.all([
+    client.fetch(casesQuery, { problem: problem || null, industry: industry || null }),
+    client.fetch(industryCategoriesQuery),
+    client.fetch(ctaConfigQuery),
+  ])) as [Case[], IndustryCategory[], any]
 
   return (
     <div className="min-h-screen bg-white">

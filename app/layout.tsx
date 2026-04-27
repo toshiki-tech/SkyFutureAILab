@@ -1,8 +1,7 @@
 import type { Metadata } from 'next'
 import { Noto_Sans_JP } from 'next/font/google'
 import './globals.css'
-import Header from '@/components/Header'
-import Footer from '@/components/Footer'
+import ConditionalChrome from '@/components/ConditionalChrome'
 
 const notoSansJp = Noto_Sans_JP({
   subsets: ['latin'],
@@ -25,9 +24,7 @@ export default function RootLayout({
   return (
     <html lang="ja" className={`${notoSansJp.variable} overflow-x-hidden`}>
       <body className="min-h-screen bg-white text-gray-900 overflow-x-hidden font-sans">
-        <Header />
-        <main className="overflow-x-hidden">{children}</main>
-        <Footer />
+        <ConditionalChrome>{children}</ConditionalChrome>
       </body>
     </html>
   )

@@ -12,14 +12,7 @@ import {
   featuredMethodsQuery,
   servicesQuery,
 } from '@/lib/sanity/queries'
-import {
-  mockCtaConfig,
-  mockServices,
-  mockFeaturedCases,
-  mockFeaturedMethods,
-  mockStats,
-  mockPartners,
-} from '@/lib/content'
+import { mockStats, mockPartners } from '@/lib/content'
 
 export const metadata: Metadata = {
   title: 'SkyFuture AI Lab | Microsoft 365・Power Platform・Dynamics 365・生成AI を活用したDX支援',
@@ -27,18 +20,15 @@ export const metadata: Metadata = {
     'Sky Future のMicrosoft 365・Power Platform・Dynamics 365・生成AI を活用したDX支援に関する事例とメソッドを紹介します。',
 }
 
-export default async function HomePage() {
-  const [sanityCtaConfig, sanityFeaturedCases, sanityFeaturedMethods, sanityServices] = await Promise.all([
-    client.fetch(ctaConfigQuery).catch(() => null),
-    client.fetch(featuredCasesQuery).catch(() => []),
-    client.fetch(featuredMethodsQuery).catch(() => []),
-    client.fetch(servicesQuery).catch(() => []),
-  ])
+export const revalidate = 60
 
-  const ctaConfig = sanityCtaConfig || mockCtaConfig
-  const featuredCases = (sanityFeaturedCases && sanityFeaturedCases.length > 0) ? sanityFeaturedCases : mockFeaturedCases
-  const featuredMethods = (sanityFeaturedMethods && sanityFeaturedMethods.length > 0) ? sanityFeaturedMethods : mockFeaturedMethods
-  const services = (sanityServices && sanityServices.length > 0) ? sanityServices : mockServices
+export default async function HomePage() {
+  const [ctaConfig, featuredCases, featuredMethods, services] = await Promise.all([
+    client.fetch(ctaConfigQuery),
+    client.fetch(featuredCasesQuery),
+    client.fetch(featuredMethodsQuery),
+    client.fetch(servicesQuery),
+  ])
 
   const statsItems = [
     { value: `${mockStats.consultationCount}+`, label: '相談実績（社）' },

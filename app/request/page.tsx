@@ -84,6 +84,8 @@ export default function RequestDocumentPage() {
   const [data, setData] = useState<FormState>(INITIAL)
   const [errors, setErrors] = useState<Errors>({})
   const [submitted, setSubmitted] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
   const update = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     setData((prev) => ({ ...prev, [key]: value }))
@@ -96,18 +98,42 @@ export default function RequestDocumentPage() {
     }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (submitting) return
     const errs = validateAll(data)
     if (Object.keys(errs).length > 0) {
       setErrors(errs)
       return
     }
-    if (data.website) {
-      return
+
+    setSubmitError(null)
+    setSubmitting(true)
+    try {
+      const res = await fetch('/api/request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          company: data.company,
+          lastName: data.lastName,
+          firstName: data.firstName,
+          email: data.email,
+          phone: data.phone,
+          privacy: data.privacy,
+          website: data.website,
+        }),
+      })
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}))
+        setSubmitError(body?.error || '送信に失敗しました。しばらくしてから再度お試しください。')
+        return
+      }
+      setSubmitted(true)
+    } catch (err) {
+      setSubmitError('ネットワークエラーが発生しました。接続を確認のうえ、再度お試しください。')
+    } finally {
+      setSubmitting(false)
     }
-    console.log('[request] submit', { ...data, website: undefined })
-    setSubmitted(true)
   }
 
   return (
@@ -291,15 +317,26 @@ export default function RequestDocumentPage() {
                       error={errors.privacy}
                     />
 
+                    {submitError && (
+                      <div
+                        role="alert"
+                        className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700"
+                      >
+                        {submitError}
+                      </div>
+                    )}
+
                     <button
                       type="submit"
-                      disabled={!data.privacy}
+                      disabled={!data.privacy || submitting}
                       className="w-full bg-accent-600 hover:bg-accent-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-accent-500/30 transition-all flex items-center justify-center gap-2 text-sm disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500 disabled:shadow-none"
                     >
-                      同意して資料をダウンロード
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                      </svg>
+                      {submitting ? '送信中...' : '同意して資料をダウンロード'}
+                      {!submitting && (
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                      )}
                     </button>
                   </form>
                 </div>

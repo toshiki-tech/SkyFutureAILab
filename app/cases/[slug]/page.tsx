@@ -6,12 +6,13 @@ import {
   ctaConfigQuery,
 } from '@/lib/sanity/queries'
 import { notFound } from 'next/navigation'
-import { mockCaseDetails, mockCtaConfig, mockFeaturedMethods } from '@/lib/content'
 import type { Case } from '@/types'
 import StickyCTA from '@/components/StickyCTA'
 import RelatedMethods from '@/components/RelatedMethods'
 import PortableTextRenderer from '@/components/PortableTextRenderer'
 import { ArticleLayout, CTABlock } from '@/components/ui'
+
+export const revalidate = 60
 
 interface CasePageProps {
   params: { slug: string }
@@ -20,9 +21,7 @@ interface CasePageProps {
 export async function generateMetadata({
   params,
 }: CasePageProps): Promise<Metadata> {
-  const caseData =
-    (await client.fetch(caseBySlugQuery, { slug: params.slug }).catch(() => null)) ||
-    mockCaseDetails[params.slug]
+  const caseData = await client.fetch<Case | null>(caseBySlugQuery, { slug: params.slug })
 
   if (!caseData) {
     return { title: '事例が見つかりません | SkyFuture AI Lab' }
@@ -37,34 +36,21 @@ export async function generateMetadata({
 export default async function CasePage({ params }: CasePageProps) {
   const { slug } = params
 
-  const [sanityCase, sanityCtaConfig] = await Promise.all([
-    client.fetch(caseBySlugQuery, { slug }).catch(() => null),
-    client.fetch(ctaConfigQuery).catch(() => null),
+  const [caseData, ctaConfig] = await Promise.all([
+    client.fetch<Case | null>(caseBySlugQuery, { slug }),
+    client.fetch(ctaConfigQuery),
   ])
-
-  const caseData = (sanityCase || mockCaseDetails[slug]) as unknown as Case
-  const ctaConfig = sanityCtaConfig || mockCtaConfig
 
   if (!caseData) {
     notFound()
   }
 
-  let relatedMethods = []
-  if (sanityCase && sanityCase.techTags?.length > 0) {
-    relatedMethods = await client
-      .fetch(relatedMethodsQuery, {
-        excludeId: sanityCase._id,
-        techTags: sanityCase.techTags,
+  const relatedMethods = caseData.techTags?.length
+    ? await client.fetch(relatedMethodsQuery, {
+        excludeId: caseData._id,
+        techTags: caseData.techTags,
       })
-      .catch(() => [])
-  }
-  if (relatedMethods.length === 0) {
-    relatedMethods = mockFeaturedMethods
-      .filter((method) =>
-        method.techTags?.some((tag) => (caseData.techTags as string[])?.includes(tag))
-      )
-      .slice(0, 3)
-  }
+    : []
 
   return (
     <ArticleLayout
@@ -75,6 +61,7 @@ export default async function CasePage({ params }: CasePageProps) {
       ]}
       title={caseData.title}
       excerpt={caseData.excerpt}
+      featuredImage={caseData.featuredImage}
       meta={{
         publishedAt: caseData.publishedAt,
         updatedAt: caseData.updatedAt,
