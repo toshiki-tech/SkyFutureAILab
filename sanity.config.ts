@@ -94,7 +94,7 @@ export default defineConfig({
                       .child(
                         S.document()
                           .schemaType('ctaConfig')
-                          .documentId('ctaConfig.singleton')
+                          .documentId('ctaConfig')
                       ),
                   ])
               ),

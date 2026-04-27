@@ -39,7 +39,7 @@ node --env-file=.env.local --import tsx scripts/migrate-to-sanity.ts --dry-run  
 node --env-file=.env.local --import tsx scripts/migrate-to-sanity.ts --apply     # actually writes
 ```
 
-`_id` convention used: `ind-*` (industryCategory), `svc-*` (service), `method-*`, `col-*` (column), `case-*`, plus the singleton `ctaConfig.singleton`. Reuse these prefixes if you add new mock entries you intend to re-import. The script does NOT migrate `featuredImage` (mock images are external URLs, not Sanity assets).
+`_id` convention used: `ind-*` (industryCategory), `svc-*` (service), `method-*`, `col-*` (column), `case-*`, plus the singleton `ctaConfig`. Reuse these prefixes if you add new mock entries you intend to re-import. The script does NOT migrate `featuredImage` (mock images are external URLs, not Sanity assets).
 
 Both `sanity/lib/client.ts` and `sanity.config.ts` silently fall back to placeholder values when env is missing (client uses `'dummy'`, Studio uses `'your-project-id'` with a `console.warn`). Neither throws on boot, so "queries return nothing / Studio shows an error screen" often means `.env.local` is missing — check it first.
 
@@ -79,7 +79,7 @@ Six document types + two submission types + four reusable content-block objects,
 - **service** — simpler: title, content, featuredImage, optional techTags.
 - **column** (`コラム`) — `category` (radio, fixed list in `column.ts`), `author`, `techTags`, `excerpt`, `content`, `featuredImage`, `seo`, `featured`. Same tag option list as `case`/`method`. Category list is independent and lives only in `column.ts`.
 - **industryCategory** — reference doc used to filter cases. Has `value` (URL slug), `displayName`, `order`.
-- **ctaConfig** — singleton (`_id: ctaConfig.singleton`) for primary/secondary CTA buttons. Edit at Studio → ⚙️ サイト設定 → CTA 設定. If this document doesn't exist, Hero and StickyCTA render nothing — see `SANITY_INIT.md`.
+- **ctaConfig** — singleton (`_id: ctaConfig`) for primary/secondary CTA buttons. Edit at Studio → ⚙️ サイト設定 → CTA 設定. If this document doesn't exist, Hero and StickyCTA render nothing — see `SANITY_INIT.md`.
 - **contactSubmission** / **requestSubmission** — form submissions written by `/api/contact` and `/api/request`. Status field for tracking; submission data fields are `readOnly` in Studio.
 
 Custom Portable Text blocks (in `sanity/schemas/objects/`, available inside every `content` field):

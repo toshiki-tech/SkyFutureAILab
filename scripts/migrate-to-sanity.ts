@@ -92,7 +92,7 @@ function buildIndustryCategoryDocs(items: IndustryCategory[]) {
 
 function buildCtaConfigDoc() {
   return {
-    _id: 'ctaConfig.singleton',
+    _id: 'ctaConfig',
     _type: 'ctaConfig',
     primaryCTA: mockCtaConfig.primaryCTA,
     secondaryCTA: mockCtaConfig.secondaryCTA,
