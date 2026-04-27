@@ -12,6 +12,9 @@ export const client = createClient({
   projectId: projectId || 'dummy',
   dataset: dataset || 'production',
   apiVersion,
-  useCdn: process.env.NODE_ENV === 'production',
+  // CDN 端点(apicdn.sanity.io)が過去のデプロイで 401 をキャッシュして
+  // しまっていたので、直接 API 端点(api.sanity.io)を使う。force-dynamic
+  // と組み合わせるとレスポンスタイムは数十ms の差で実用上問題なし。
+  useCdn: false,
   ...(readToken ? { token: readToken } : {}),
 })
