@@ -20,7 +20,7 @@ export default function ConditionalChrome({ children }: { children: ReactNode })
   return (
     <>
       <Header />
-      <main className="overflow-x-hidden">{children}</main>
+      <main className="overflow-x-clip">{children}</main>
       <Footer />
     </>
   )

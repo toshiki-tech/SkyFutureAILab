@@ -34,7 +34,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
   letter-spacing: 0.01em;
   line-height: 1.6;
-  overflow-x: hidden;
+  /* `clip` は overflow:hidden と同じ視覚効果だが、scroll container を作らないので
+     子孫の position:sticky が壊れない。Chrome 90+ / Safari 16+ / Firefox 81+ */
+  overflow-x: clip;
 }
 
 /* 自定义滚动条样式 */
