@@ -1,55 +1,78 @@
 import { NextResponse } from 'next/server'
+import { createClient } from 'next-sanity'
 import { client } from '@/sanity/lib/client'
 import { ctaConfigQuery } from '@/lib/sanity/queries'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-/**
- * 一時的なデバッグエンドポイント。Vercel runtime が ctaConfig を
- * 取得できているかどうか確認するためのもの。確認後に削除する。
- */
+const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || ''
+const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production'
+
 export async function GET() {
-  const env = {
-    NEXT_PUBLIC_SANITY_PROJECT_ID: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || null,
-    NEXT_PUBLIC_SANITY_DATASET: process.env.NEXT_PUBLIC_SANITY_DATASET || null,
-    SANITY_API_READ_TOKEN_present: !!process.env.SANITY_API_READ_TOKEN,
-    NODE_ENV: process.env.NODE_ENV,
-    VERCEL_ENV: process.env.VERCEL_ENV || null,
+  // 1. 既存 client(共有インスタンス、useCdn: false、token なし)
+  let viaSharedClient: any = null
+  try {
+    viaSharedClient = await client.fetch(ctaConfigQuery)
+  } catch (e: any) {
+    viaSharedClient = { __error: e?.message, statusCode: e?.statusCode }
   }
 
-  let result: any = null
-  let errorInfo: any = null
+  // 2. 都度作る client(同じ config)
+  const freshClient = createClient({
+    projectId,
+    dataset,
+    apiVersion: '2024-01-01',
+    useCdn: false,
+  })
+  let viaFreshClient: any = null
   try {
-    result = await client.fetch(ctaConfigQuery)
+    viaFreshClient = await freshClient.fetch(ctaConfigQuery)
   } catch (e: any) {
-    errorInfo = {
-      message: e?.message || String(e),
-      statusCode: e?.statusCode,
-      errorCode: e?.response?.body?.errorCode,
-      url: e?.response?.url,
-    }
+    viaFreshClient = { __error: e?.message, statusCode: e?.statusCode }
   }
 
-  // 二度引きで cache の影響を排除
-  let result2: any = null
-  let errorInfo2: any = null
+  // 3. useCdn: true(CDN)で試す
+  const cdnClient = createClient({
+    projectId,
+    dataset,
+    apiVersion: '2024-01-01',
+    useCdn: true,
+  })
+  let viaCdnClient: any = null
   try {
-    result2 = await client.fetch(ctaConfigQuery)
+    viaCdnClient = await cdnClient.fetch(ctaConfigQuery)
   } catch (e: any) {
-    errorInfo2 = {
-      message: e?.message || String(e),
-      statusCode: e?.statusCode,
-      errorCode: e?.response?.body?.errorCode,
+    viaCdnClient = { __error: e?.message, statusCode: e?.statusCode }
+  }
+
+  // 4. Native fetch で API 直叩き(next-sanity をバイパス)
+  const apiUrl = `https://${projectId}.api.sanity.io/v2024-01-01/data/query/${dataset}?query=${encodeURIComponent(ctaConfigQuery)}`
+  let viaNativeApi: any = null
+  try {
+    const res = await fetch(apiUrl, { cache: 'no-store' })
+    viaNativeApi = {
+      status: res.status,
+      body: await res.json(),
     }
+  } catch (e: any) {
+    viaNativeApi = { __error: e?.message }
+  }
+
+  // 5. シンプル query(どんな case でもいい)で client が動くか確認
+  let casesCount: any = null
+  try {
+    casesCount = await client.fetch(`count(*[_type == "case"])`)
+  } catch (e: any) {
+    casesCount = { __error: e?.message }
   }
 
   return NextResponse.json({
-    env,
-    result,
-    errorInfo,
-    result2,
-    errorInfo2,
-    note: 'expected: result.primaryCTA.text === "無料で資料をダウンロード"',
-  })
+    apiUrl,
+    viaSharedClient,
+    viaFreshClient,
+    viaCdnClient,
+    viaNativeApi,
+    casesCount,
+  }, { headers: { 'cache-control': 'no-store' } })
 }
